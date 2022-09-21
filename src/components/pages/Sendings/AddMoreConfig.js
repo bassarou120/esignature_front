@@ -1,0 +1,479 @@
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import ReactDOM from 'react-dom';
+import { Link, useHistory, useLocation, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import $ from 'jquery';
+import Sidebar from "../../Sidebar";
+import NavB from "../../Nav";
+import ProfileUlHeader from "../../Sample/ProfileUlHeader";
+import Footer from "../../Footer";
+window.$ = $;
+
+
+const AddMoreConfig = (props) => {
+
+    const [objet, setObjet] = useState('');
+    const [message, setMessage] = useState('');
+    const [expiration, setExpiration] = useState('Aucun');
+    const [rappel, setRappel] = useState('Aucun');
+    const location = useLocation();
+    const [display_detail, setDisplayDetail] = useState(false);
+    const [widget, setWidget] = useState('');
+    const signataires = getStateVal(location).length === 0 ? JSON.parse(localStorage.getItem('signataires')) : getStateVal(location);
+
+    function getStateVal(ele) {
+        if (typeof (ele.state) !== 'undefined') {
+            try {
+                return JSON.parse(ele.state);
+            } catch (e) {
+                var json = '[{"value":"' + ele.state + '"}]';
+                return JSON.parse(json);
+            }
+        } else {
+            return [];
+        }
+    }
+
+    const history = useHistory();
+
+    useEffect(() => {
+
+        var formRepeater = $(".form-repeater");
+        var row = 2;
+
+        if (signataires.length !== 0) {
+            row = signataires.length;
+        } else {
+            row = 2;
+        }
+
+        var col = 1;
+
+        formRepeater.repeater({
+            show: function () {
+                var fromControl = $(this).find('.form-control, .form-select');
+                var formLabel = $(this).find('.form-label');
+
+                fromControl.each(function (i) {
+                    var id = 'form-repeater-' + row + '-' + col;
+                    $(fromControl[i]).attr('id', id);
+                    $(formLabel[i]).attr('for', id);
+                    col++;
+                });
+
+                row++;
+                $(this).slideDown();
+            },
+            hide: function (e) {
+                window.confirm('Are you sure you want to delete this element?') && $(this).slideUp(e);
+            }
+        });
+
+        // Start
+        var formRepeaterCc = $(".form-repeater-cc");
+
+        var row1 = 2;
+        var col1 = 1;
+        formRepeaterCc.on('submit', function (e) {
+            e.preventDefault();
+        });
+        formRepeaterCc.repeater({
+            show: function () {
+                var fromControl = $(this).find('.form-control, .form-select');
+                var formLabel = $(this).find('.form-label');
+
+                fromControl.each(function (i) {
+                    var id = 'form-repeater-' + row1 + '-' + col1;
+                    $(fromControl[i]).attr('id', id);
+                    $(formLabel[i]).attr('for', id);
+                    col++;
+                });
+
+                row++;
+
+                $(this).slideDown();
+            },
+            hide: function (e) {
+                window.confirm('Are you sure you want to delete this element?') && $(this).slideUp(e);
+            }
+        });
+
+        getSendingDetail();
+
+    }, [])
+
+    const { id } = useParams();
+
+    const getSendingDetail = (e) => {
+        axios
+            .get('/esignature/sendings/' + id)
+            .then(response => {
+                if (response.data.success === true) {
+                    if (response.data.data.is_config) {
+                        setDisplayDetail(true);
+                        setWidget(response.data.data.configuration);
+                    } else {
+                        setDisplayDetail(true);
+                    }
+                }
+            }).catch(function (error) {
+                if (error.response) {
+                    if (error.response.status === 404) {
+                        setDisplayDetail(false);
+                    }
+                }
+            });
+    }
+
+    const endSendingForm = (e) => {
+        e.preventDefault();
+        // if (!$("#chooseSignatureType").valid()) return false
+
+        window['startspinner']();
+
+        var signataire = [];
+
+        var myDiv = $('.si_class');
+        $.each(myDiv, function (index, value) {
+            var i = index + 1;
+            var t = '#form-repeater-' + i + '-1';
+            var type = "signataires[" + index + "][type]";
+
+            var name = "signataires[" + index + "][name]";
+
+            var email = "signataires[" + index + "][email]";
+
+            // if($(t).val()==='' || $(t).val()===undefined){
+            //     signataire.push({
+            //         type: $('input[name="' + type + '"]').val(),
+            //         name: $('input[name="' + name + '"]').val(),
+            //         email: $('input[name="' + email + '"]').val(),
+            //     })
+            // }
+            // else{
+            signataire.push({
+                type: $(t).val(),
+                name: $('input[name="' + name + '"]').val(),
+                email: $('input[name="' + email + '"]').val(),
+            })
+            //  }
+        });
+
+        var myDiv2 = $('.si_class_map');
+        $.each(myDiv2, function (index, value) {
+            signataire.push({
+                type: $(this).find("#map-1-1").val(),
+                name: $(this).find("#map-1-2").val(),
+                email: $(this).find("#map-1-3").val(),
+            })
+        });
+
+        var cc = [];
+        var myDiv1 = $('.cc_class');
+        $.each(myDiv1, function (index, value) {
+            var name = "cc[" + index + "][name]";
+            var email = "cc[" + index + "][email]";
+            cc.push({
+                type: $('input[name="' + name + '"]').val(),
+                email: $('input[name="' + email + '"]').val(),
+            })
+        });
+
+        var data = new FormData(this)
+        data.append('id', id)
+        data.append('objet', objet)
+        data.append('message', message)
+        data.append('signataire', JSON.stringify(signataire))
+        data.append('cc', JSON.stringify(cc))
+        data.append('expiration', expiration)
+        data.append('rappel', rappel)
+
+        axios
+            .put('/esignature/sendings/' + id, Object.fromEntries(data))
+            .then(response => {
+
+                if (response.data.success === true) {
+                    window['endspinner']();
+                    $('#addMoreConfigForm').trigger("reset");
+                    window['showSuccessToast']('Opération réussie !!')
+                    // var id=  response.data.data.id;
+                    // window.location = "/detail/sending/"+id;
+                    localStorage.clear();
+                    history.push('/detail/sending/' + id);
+
+                } else {
+                    console.log('error');
+                }
+            });
+    }
+
+    const handleChange = (e) => {
+        var value = e.target.value;
+        console.log(e.target.next())
+    }
+
+    const ExpirationInputChange = (e) => {
+        if (e.target.value === 'Personnaliser') {
+            $('#rappel_block').removeClass('d-none');
+        } else {
+            $('#rappel_block').addClass('d-none');
+            setExpiration(e.target.value);
+        }
+    }
+
+    const RappelInputChange = (e) => {
+
+        if (e.target.value === 'Personnaliser') {
+            $('#expiration_block').removeClass('d-none');
+        } else {
+            $('#expiration_block').addClass('d-none');
+            setRappel(e.target.value);
+        }
+    }
+
+    const UpdateSignataire = (e) => {
+        var w = JSON.parse(widget);
+        $.each(signataires, function (index, value) {
+            if (value.value === $(e.target).data('oldvalue')) {
+                signataires[index].value = e.target.value;
+
+                $.each(w, function (i, v) {
+                    if (v.signataire === $(e.target).data('oldvalue')) {
+                        w[i].signataire = e.target.value;
+                    }
+                });
+            }
+        });
+
+    }
+
+
+    $('body').on('click', '.new_row', function (e) {
+        e.stopPropagation();
+        return false;
+    })
+
+    $('body').on('click', '.delete_row', function (e) {
+        e.stopPropagation();
+        return false;
+    })
+
+
+    return (
+        <div className='layout-wrapper layout-content-navbar layout-without-menu'>
+            <div className="layout-container">
+                <div className="layout-page">
+                    <div className="mx-5 mt-2" id="general_error"></div>
+                    <div className="content-wrapper">
+                        {/* Start Content*/}
+                        <div className="container-xxl flex-grow-1 container-p-y">
+                            <form id="addMoreConfigForm" onSubmit={endSendingForm}>
+                                <div className=" d-flex justify-content-between mb-3">
+                                    <h4 className="fw-bold py-1 ">
+                                        <span className="text-muted fw-light">Configuration du mail à envoyer</span>
+                                    </h4>
+                                    <div className="">
+                                        <div className="demo-inline-spacing">
+                                            <button type="submit" className="btn btn-primary" id="sbt_btn">
+                                                <span className="spinner-border d-none" role="status" aria-hidden="true" id="spinner_btn" />
+                                                Envoyer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="card">
+                                    <div className="card-header">
+                                        <h5 className="card-title">
+                                            Ajouter des signataires
+                                        </h5>
+                                    </div>
+                                    <div className="card-body">
+                                        <div className="form-repeater">
+                                            {signataires.map((l, k) => <div key={k} >
+                                                    <div className='si_class_map'>
+                                                        <div className="row">
+                                                            <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
+                                                                <label className="form-label" htmlFor="map-1-1" >Type</label>
+                                                                <select id="map-1-1" name="type" className="form-select" >
+                                                                    <option value="Signataire">Signataire</option>
+                                                                </select>
+                                                            </div>
+                                                            <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
+                                                                <label className="form-label" htmlFor="map-1-2">Nom</label>
+                                                                <input type="text" id="map-1-2" name="name" className="form-control" defaultValue={l.value}
+                                                                       placeholder="Signataire" data-oldvalue={l.value} onChange={e => UpdateSignataire(e)} />
+                                                            </div>
+                                                            <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
+                                                                <label className="form-label" htmlFor="map-1-3">Email</label>
+                                                                <input type="email" id="map-1-3" name="email" className="form-control" onChange={e => ''}
+                                                                       placeholder="signataire@gmail.com" />
+                                                            </div>
+                                                        </div>
+                                                        <hr />
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div data-repeater-list="signataires" >
+                                                <div className='si_class' data-repeater-item>
+                                                    <div className="row">
+                                                        <div className="mb-3 col-lg-6 col-xl-3 col-12 mb-0">
+                                                            <label className="form-label" htmlFor="form-repeater-1-1" >Type</label>
+                                                            <select id="form-repeater-1-1" name="type" className="form-select" >
+                                                                {/*<option value="Signataire">Signataire</option>*/}
+                                                                <option value="Validataire">Validataire</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="mb-3 col-lg-6 col-xl-3 col-12 mb-0">
+                                                            <label className="form-label" htmlFor="form-repeater-1-1">Nom</label>
+                                                            <input type="text" id="form-repeater-1-2" name="name" className="form-control"
+                                                                   placeholder="xxxx" />
+                                                        </div>
+                                                        <div className="mb-3 col-lg-6 col-xl-3 col-12 mb-0">
+                                                            <label className="form-label" htmlFor="form-repeater-1-2">Email</label>
+                                                            <input type="email" id="form-repeater-1-3" name="email" className="form-control"
+                                                                   placeholder="xxxx@gmail.com" />
+                                                        </div>
+                                                        <div className="mb-3 col-lg-12 col-xl-3 col-12 d-flex align-items-center mb-0">
+                                                            <button className="btn btn-label-danger mt-4 delete_row" data-repeater-delete>
+                                                                <i className="bx bx-x"></i>
+                                                                <span className="align-middle">Supprimer</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                            <div className="mb-0">
+                                                <button className="btn btn-primary new_row" data-repeater-create >
+                                                    <i className="bx bx-plus"></i>
+                                                    <span className="align-middle">Ajouter</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="card mt-3">
+                                    <div className="card-header">
+                                        <h5 className="card-title">
+                                            Écrire un message pour les destinataires
+                                        </h5>
+                                    </div>
+                                    <div className="card-body">
+
+                                        <div className="row">
+                                            <div className="mb-3 col-lg-12 col-xl-6 col-12 mb-0">
+                                                <label className="form-label" htmlFor="form-repeater-1-1">Objet</label>
+                                                <input type="text" id="objet" name="objet" className="form-control" onChange={e => setObjet(e.target.value)}
+                                                       placeholder="Objet" />
+                                            </div>
+                                            <div className="mb-3 col-lg-12 col-xl-6 col-12 mb-0">
+                                                <label className="form-label" htmlFor="form-repeater-1-2">Message</label>
+                                                <textarea className="form-control" id="message" name="message" onChange={e => setMessage(e.target.value)}
+                                                          rows="3"></textarea>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div className="card mt-3">
+                                    <div className="card-header">
+                                        <h5 className="card-title">
+                                            Ajouter les personnes qui recevront une copie des documents signés
+                                        </h5>
+                                    </div>
+                                    <div className="card-body">
+                                        <div className="form-repeater-cc">
+                                            <div data-repeater-list="cc">
+                                                <div className='cc_class' id="for_cc" data-repeater-item>
+                                                    <div className="row">
+                                                        <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
+                                                            <label className="form-label" htmlFor="cc-1-1">Nom</label>
+                                                            <input type="text" id="cc-1-1" name="name" className="form-control"
+                                                                   placeholder="Cc" />
+                                                        </div>
+                                                        <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
+                                                            <label className="form-label" htmlFor="cc-1-2">Email</label>
+                                                            <input type="email" id="cc-1-2" name="email" className="form-control"
+                                                                   placeholder="cc@gmail.com" />
+                                                        </div>
+                                                        <div className="mb-3 col-lg-12 col-xl-2 col-12 d-flex align-items-center mb-0">
+                                                            <button className="btn btn-label-danger delete_row mt-4" data-repeater-delete>
+                                                                <i className="bx bx-x"></i>
+                                                                <span className="align-middle">Supprimer</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                            <div className="mb-0">
+                                                <button className="btn btn-primary new_row" data-repeater-create>
+                                                    <i className="bx bx-plus"></i>
+                                                    <span className="align-middle">Ajouter</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="card mt-3">
+                                    <div className="card-header">
+                                        <h5 className="card-title">
+                                            Rappels et délai d'expiration
+                                        </h5>
+                                    </div>
+                                    <div className="card-body">
+
+                                        <div className="row">
+                                            <div className="mb-3 col-lg-6 col-xl-6 col-12 mb-0">
+                                                <label className="form-label" htmlFor="form-repeater-1-3">Rappel</label>
+                                                <select id="rappel" value={rappel} name="rappel" className="form-select" onChange={RappelInputChange}>
+                                                    <option value="Aucun">Aucun</option>
+                                                    <option value="Quotidien">Quotidien</option>
+                                                    <option value="Hebdomadaire">Hebdomadaire</option>
+                                                    <option value="Mensuel">Mensuel</option>
+                                                    <option value="Personnaliser">Personnalisé</option>
+                                                </select>
+                                            </div>
+                                            <div className="mb-3 col-lg-6 col-xl-6 col-12 mb-0">
+                                                <label className="form-label" htmlFor="form-repeater-1-3">Expiration</label>
+                                                <select id="expiration" value={expiration} name="expiration" className="form-select" onChange={ExpirationInputChange}>
+                                                    <option value="Aucun">Aucun</option>
+                                                    <option value="Personnaliser">Personnalisé</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="mb-3 col-lg-6 col-xl-6 col-12 mb-0 d-none" id="rappel_block">
+                                                <label className="form-label" htmlFor="form-repeater-1-3">Nombre de jours après l'envoi</label>
+                                                <input type="number" className="form-control" name="remember_day" id="remember_day" onChange={e => setRappel(e.target.value)} />
+                                            </div>
+                                            <div className="mb-3 col-lg-6 col-xl-6 col-12 mb-0 d-none" id="expiration_block">
+                                                <label className="form-label" htmlFor="form-repeater-1-3">Jours avant l'expiration</label>
+                                                <input className="form-control" type="number" name="expiration_day" id="expiration_day" onChange={e => setExpiration(e.target.value)} />
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        {/* End Content*/}
+                        <Footer/>
+                        <div className="content-backdrop fade"></div>
+                    </div>
+                </div>
+            </div>
+            <div className="layout-overlay layout-menu-toggle"/>
+            <div className="drag-target"/>
+        </div>
+    );
+}
+
+export default AddMoreConfig;
+

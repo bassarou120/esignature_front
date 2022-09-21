@@ -1,43 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
+    <meta name="description" content="Application de signature électronique de document" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="%PUBLIC_URL%/assets/img/favicon/favicon.ico" />
+    <title>%REACT_APP_NAME%</title>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/font-awesome-line-awesome/css/all.min.css">
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/fonts/flag-icons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/css/rtl/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/css/rtl/theme-default1.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/apex-charts/apex-charts.css" />
+
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/bs-stepper/bs-stepper.css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/rateyo/rateyo.css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/animate-css/animate.css">
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/spinkit/spinkit.css" />
+
+<!--    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />-->
+<!--    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/select2/select2.css" />-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />-->
+
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/tagify/tagify.css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/apex-charts/apex-charts.css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/libs/sweetalert2/sweetalert2.css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/css/e-signature.css" />
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/js/helpers.js"></script>
+
+    <script src="%PUBLIC_URL%/assets/js/config.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" />
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+<!--    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>-->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    <style>
+        .spinner {
+            margin: 100px auto;
+            width: 50px;
+            height: 40px;
+            text-align: center;
+            font-size: 10px;
+        }
+
+        .spinner>div {
+            background-color: #333;
+            height: 100%;
+            width: 6px;
+            display: inline-block;
+            -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+            animation: sk-stretchdelay 1.2s infinite ease-in-out;
+        }
+
+        .spinner .rect2 {
+            -webkit-animation-delay: -1.1s;
+            animation-delay: -1.1s;
+        }
+
+        .spinner .rect3 {
+            -webkit-animation-delay: -1.0s;
+            animation-delay: -1.0s;
+        }
+
+        .spinner .rect4 {
+            -webkit-animation-delay: -0.9s;
+            animation-delay: -0.9s;
+        }
+
+        .spinner .rect5 {
+            -webkit-animation-delay: -0.8s;
+            animation-delay: -0.8s;
+        }
+
+        @-webkit-keyframes sk-stretchdelay {
+            0%,
+            40%,
+            100% {
+                -webkit-transform: scaleY(0.4)
+            }
+            20% {
+                -webkit-transform: scaleY(1.0)
+            }
+        }
+
+        @keyframes sk-stretchdelay {
+            0%,
+            40%,
+            100% {
+                transform: scaleY(0.4);
+                -webkit-transform: scaleY(0.4);
+            }
+            20% {
+                transform: scaleY(1.0);
+                -webkit-transform: scaleY(1.0);
+            }
+        }
+
+        .menu-sub-d {
+            flex-direction: column;
+            margin: 0;
+            padding: 0
+        }
+
+        .select2 {
+            z-index: 99999999;
+        }
+    </style>
+
+    <style>
+        .nomrgn {
+            margin-left: 0px !important;
+            margin-right: 0px !important;
+        }
+
+        .nopadd {
+            padding: 0px !important;
+        }
+
+        #modules {
+            /*background: #eee;*/
+            z-index: 1;
+        }
+
+        .drag-field {
+            padding-top: 15px !important;
+        }
+
+        .drag-field a {
+            width: 100%;
+        }
+
+        .dropzone {
+            position: relative;
+        }
+
+        .active {
+            /*outline: 1px solid red;*/
+        }
+
+        .hover {
+            outline: 1px solid blue;
+        }
+
+        .drop-item .remove {
+            display: none;
+        }
+
+        .drop-item:hover .remove {
+            display: inherit;
+        }
+
+        .remove {
+            background: no-repeat;
+            border: none;
+            font-size: 11px;
+            color: red !important;
+        }
+
+        .drop-item {
+            cursor: move;
+            margin-bottom: 10px;
+            background-color: rgb(100, 140, 208);
+            padding: 20px;
+            border: 1px solid rgb(204, 204, 204);
+            border-radius: 5px !important;
+            position: absolute !important;
+            z-index: 90 !important;
+        }
+
+        .disabled_widget {
+            background-color: #F5F5F9 !important;
+        }
+
+        .drop-item p {
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .drop-item .remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+        }
+    </style>
+
+    <style>
+        .the_selected_tag {
+            background-color: #696CFF !important;
+            color: white !important;
+        }
+
+        .center-screen {
+            /*display: flex;*/
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 100vh;
+        }
+
+        #field_card::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #field_card::-webkit-scrollbar-track {
+            background-color: white;
+        }
+
+        #main-container::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #main-container::-webkit-scrollbar-track {
+            background-color: #F5F5F9;
+        }
+
+        .swal2-container {
+            z-index: 20000 !important;
+        }
+    </style>
+
+</head>
+
+<body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // $(document).ready(function() {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
+        function showSuccessToast(message) {
+            Toast.fire({
+                icon: 'success',
+                title: message
+            })
+        }
+
+        function showErrorToast(message) {
+            Toast.fire({
+                icon: 'error',
+                title: message
+            })
+
+        }
+
+        function error_419() {
+            $('#general_error').html('');
+            $('#general_error').append(
+                '<div class="alert alert-danger alert-dismissible" role="alert"> Votre session a expiré ! Veuillez vous reconnecter' +
+                ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">' +
+                ' </button>' +
+                ' </div>'
+            );
+            $('html,body').animate({
+                scrollTop: $("#top").offset().top
+            }, 'slow');
+        }
+
+        function startspinner() {
+            $('#spinner_btn').removeClass('d-none');
+            $('#sbt_btn').prop("disabled", true);
+        }
+
+        function endspinner() {
+            $('#spinner_btn').addClass('d-none')
+            $('#sbt_btn').prop("disabled", false);
+        }
+
+        function server_side_alert_error(data) {
+            $('#serveur_side_error').html('');
+            // $('#serveur_side_error_alert').removeClass('d-none');
+            $.each(data, function(key, value) {
+                $('#serveur_side_error').append('<li>' + value + '</li>');
+            });
+        }
+
+        $(document).ready(function() { });
+
+    </script>
+    <script src="%PUBLIC_URL%/assets/vendor/libs/popper/popper.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/js/bootstrap.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+<!--    <script src="%PUBLIC_URL%/assets/vendor/libs/select2/select2.js"></script>-->
+<!--    <script src="%PUBLIC_URL%/assets/js/main-simple.js"></script>-->
+    <script src="%PUBLIC_URL%/assets/vendor/js/menu-simple.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/libs/tagify/tagify.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/libs/sortablejs/sortable.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+    <script src="%PUBLIC_URL%/assets/js/dashboards-analytics.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/libs/toastr/toastr.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js"></script>
+    <script src="%PUBLIC_URL%/messages_fr.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/libs/jquery-repeater/jquery-repeater.js"></script>
+    <script src="%PUBLIC_URL%/assets/js/moreconfig.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+<!--    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>-->
+
+</body>
+
 </html>

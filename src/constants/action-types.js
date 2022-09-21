@@ -1,0 +1,2 @@
+export const CHANGE_MODAL_TYPE = "CHANGE_MODAL_TYPE";
+export const GET_SIGNATAIRE = "GET_SIGNATAIRE";
