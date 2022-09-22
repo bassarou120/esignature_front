@@ -23,8 +23,6 @@ const ModalChoice = () => {
     const splitloc = window.location.href.split("/");
     const lk= splitloc[splitloc.length -1];
 
-
-
     useEffect(() => {
         const script = document.createElement("script");
         script.src = '../assets/js/validation/modal.js';

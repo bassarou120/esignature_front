@@ -49,10 +49,16 @@ const Sidebar = ( ) => {
         const logout = (e) =>{
             e.preventDefault();
             axios
-                .post('/logout', {})
+                .post(process.env.REACT_APP_API_BASE_URL+'logout', {},{
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                })
                 .then(response => {
-                    if(response.status===204){
-                        window.location.href='/'
+                    if(response.status===200){
+                        localStorage.clear();
+                        window.location.href='/login'
                     }
                 });
         };
@@ -280,7 +286,7 @@ const Sidebar = ( ) => {
                     })}
 
                     <li className="menu-item">
-                        <a href="#!" className="menu-link" onClick={logout}>
+                        <a href="#" className="menu-link" onClick={logout}>
                             <i className="menu-icon fa fa-sign-out"/>
                             <div data-i18n="Logout">Déconnexion</div>
                         </a>

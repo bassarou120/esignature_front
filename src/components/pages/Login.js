@@ -44,7 +44,8 @@ const Login = ( ) => {
                     localStorage.setItem('token',response.data.data.token);
                     localStorage.setItem('userId',encrypt(response.data.data.id) );
                     localStorage.setItem('userData',encrypt(response.data.data) );
-                    history.push('/home');
+                   // history.push('/home');
+                    window.location.href='/home'
                 }
             }).catch(error=>{
                 console.log(error);

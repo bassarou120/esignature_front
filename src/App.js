@@ -44,6 +44,7 @@ const App = () => {
     const [register_as_model, setRegisterAsModel] = useState(0);
     const [confirmOpen, setConfirmOpen] = useState(true);
     const [userInfo, setUserInfo] = useState([]);
+    const [canDisplayChoiceModal, setCanDisplayChoiceModal] = useState(false);
     //const auth_user = $('#root').data('usr');
 
     const history = useHistory();
@@ -62,7 +63,10 @@ const App = () => {
         let array =['/login','/register','/resetpassword','/forgetpassword']
         if (localStorage.getItem('token')){
             // var user = decrypt(localStorage.getItem('userData'));
-            // console.log(user)
+            if(array.includes(window.location.pathname)){
+                window.history.back()
+               // history.push('/home')
+            }
             let object = decrypt(localStorage.getItem('userData'));
             setUserInfo({
                 id:object.id,
@@ -71,6 +75,7 @@ const App = () => {
                 phone_number:object.phone_number,
                 entreprise:object.entreprise,
             })
+            setCanDisplayChoiceModal(true);
         }
         else{
             if(!array.includes(window.location.pathname)){
@@ -104,18 +109,26 @@ const App = () => {
     const canAddModalChoice =()=>{
         const splitloc = window.location.href.split("/");
         const lk= splitloc[splitloc.length -1];
+        alert('helo')
         if(lk !=='login' || lk !=='register' || lk !=='forgetpassword' || lk !=='resetpassword'){
+           console.log('do not' )
             return true;
         }
         else{
+            console.log('do' )
             return false
         }
     }
 
     return loader ? ( <Loader text="" /> ) :
     (
+       <>
+           {canDisplayChoiceModal ? <ModalChoice  /> :null}
+
         <Router>
+
           <Switch>
+
             <Route path="/login">
                 <Login />
             </Route>
@@ -185,10 +198,11 @@ const App = () => {
               </Route>
               <Route render={() => <NoFound_error/>} />
           </Switch>
-            {canAddModalChoice ? <ModalChoice  /> :null}
+
 
 
         </Router>
+       </>
     );
 }
 
