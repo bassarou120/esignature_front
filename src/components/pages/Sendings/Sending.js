@@ -295,7 +295,7 @@ const Sending = (props) => {
 
     const userLeavingPage = e => {
         e.preventDefault();
-        if(sendingData.register_as_model===0 && sendingData.is_registed===0){
+        if((sendingData.register_as_model===0 || sendingData.register_as_model===false) && (sendingData.is_registed===0 || sendingData.is_registed===false)){
             axios
                 .delete(process.env.REACT_APP_API_BASE_URL+'sendings/'+id,{
                     headers: {
@@ -304,7 +304,7 @@ const Sending = (props) => {
                     }
                 })
                 .then(response => {
-                    $('#leavePageModal').modal('hide');
+                    handleClose();
                     window.history.back()
                 }).catch(function (error) {
                 if (error.response) {
