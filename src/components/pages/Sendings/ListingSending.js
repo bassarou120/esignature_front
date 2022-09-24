@@ -199,20 +199,31 @@ const ListingSending = () => {
                 <td>{l.created_at}</td>
                 <td>{l.nbre_signataire}</td>
                 <td>{ renderSpanStatut(l.statut[0].name)}</td>
-                <td><div className="dropdown">
-                    <button type="button" className="btn p-0 dropdown-toggle hide-arrow"
-                            data-bs-toggle="dropdown"><i className="bx bx-dots-vertical-rounded"></i>
-                    </button>
-                    <div className="dropdown-menu">
-                        <Link className="dropdown-item show" to={"/detail/sending/"+l.id} data-id={l.id}><i className="fa  fa-info-circle me-1"></i> Voir</Link>
-                        <a className="dropdown-item edit" href="#" data-id={l.id}><i className="bx bx-edit-alt me-1"></i> Edit</a>
+                <td>
+                    {/*<div className="dropdown">
+                        <button type="button" className="btn p-0 dropdown-toggle hide-arrow"
+                                data-bs-toggle="dropdown"><i className="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div className="dropdown-menu">
+                            <Link className="dropdown-item show" to={"/detail/sending/"+l.id} data-id={l.id}><i className="fa  fa-info-circle me-1"></i> Voir</Link>
+                            <a className="dropdown-item edit" href="#" data-id={l.id}><i className="bx bx-edit-alt me-1"></i> Edit</a>
+                            {l.statut[0].name!=='EN_COURS' &&
+                            <a className="dropdown-item archive" href="#" data-id={l.id}><i className="bx bx-archive me-1"></i> Archiver</a>
+                            }
+                            <a className="dropdown-item delete text-danger" href="#" data-id={l.id}><i className="bx bx-trash me-1"></i> Supprimer</a>
+                        </div>
+                    </div>*/}
+                    <div className="demo-inline-spacing">
+                        <Link className="btn btn-icon text-info show" to={"/detail/sending/"+l.id} data-id={l.id}><i className="fa fa-info-circle me-1"></i></Link>
+                        <a  href="#" className="btn btn-icon btn-text edit">
+                            <i  className="tf-icons bx bx-edit-alt"></i>
+                        </a>
                         {l.statut[0].name!=='EN_COURS' &&
-                        <a className="dropdown-item archive" href="#" data-id={l.id}><i className="bx bx-archive me-1"></i> Archiver</a>
+                        <a className="btn btn-icon text-primary archive" href="#" data-id={l.id}><i className="bx bx-archive me-1"></i></a>
                         }
-                        <a className="dropdown-item delete text-danger" href="#" data-id={l.id}><i className="bx bx-trash me-1"></i> Supprimer</a>
-
+                        <a className="btn btn-icon delete text-danger" href="#" data-id={l.id}><i className="bx bx-trash me-1"></i></a>
                     </div>
-                </div></td>
+                </td>
             </tr>) : <tr>
                 <td colSpan="6" className="text-center">Aucun élément à afficher </td>
             </tr>}
@@ -222,7 +233,7 @@ const ListingSending = () => {
 
     const handlePageClick = (event) => {
         const newOffset = event.selected * itemsPerPage % data.length;
-        console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
+        // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
         setItemOffset(newOffset);
     };
 

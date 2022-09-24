@@ -24,14 +24,16 @@ const ViewSending = ( ) => {
         getSendingDetail();
         getSignataireAndStatus();
         getCc();
-
-       // pdf && renderPage();
-       // showPdf();
     }, [])
 
     const getSendingDetail = (e) => {
         axios
-            .get('/esignature/sendings/'+id)
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/'+id,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
             .then(response => {
                 if(response.data.success === true){
                     if(response.data.data.is_config){
@@ -63,7 +65,12 @@ const ViewSending = ( ) => {
 
     const getSignataireAndStatus = (e) => {
         axios
-            .get('/esignature/sendings/get/all/signataire/laststatut/'+id)
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/get/all/signataire/laststatut/'+id,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
             .then(response => {
                 if(response.data.success === true){
                     setSendingStatutBySignataire(response.data.data);
@@ -73,7 +80,12 @@ const ViewSending = ( ) => {
 
     const getCc = (e) => {
         axios
-            .get('/esignature/sendings/get/all/cc/'+id)
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/get/all/cc/'+id,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
             .then(response => {
                 if(response.data.success === true){
                     setCc(response.data.data);
@@ -99,7 +111,7 @@ const ViewSending = ( ) => {
 
     var n =sendingData["document"]?.[0]?.nbre_page;
     for (var i = 1; i <= n; i++) {
-        indents.push(<div key={i} className="list-group-item"><img className="d-flex justify-content-between w-100" src={"/previews/"+folder+'/'+i+'.jpeg'} width="115"/></div>);
+        indents.push(<div key={i} className="list-group-item"><img className="d-flex justify-content-between w-100" src={process.env.REACT_APP_BACKEND_ASSET_BASE_URL+"previews/"+folder+'/'+i+'.jpeg'} width="115"/></div>);
     }
 
     return !display_detail ? ( unknowSending() ) :

@@ -12,7 +12,7 @@ window.$ = $;
 
 
 const Sendboard = ( ) => {
-    const  { id } = useParams();
+    const params = useParams();
     const [state, setState] = useState('');
     const [title, setTitle] = useState('');
     const [display_detail, setDisplayDetail] = useState(false);
@@ -23,7 +23,7 @@ const Sendboard = ( ) => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const [config, setConfig] = useState([]);
-    const [newwidget, setNewwidget] = useState(0);
+    const [widget, setWidget] = useState([]);
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -31,10 +31,12 @@ const Sendboard = ( ) => {
 
     useEffect(() => {
         getSendingInfo();
+        getSignataireWidget();
     } )
+
     function getSendingInfo(){
         axios
-            .get(process.env.REACT_APP_API_BASE_URL+'sendings/bysignataire/'+id,{
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/'+params.idsending,{
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -60,7 +62,6 @@ const Sendboard = ( ) => {
                         else{
                             localStorage.setItem('widgets', response.data.data["configuration"]);
                             setConfig(JSON.parse(response.data.data["configuration"]));
-
                         }
                         setImglist(inter);
                     }
@@ -74,6 +75,22 @@ const Sendboard = ( ) => {
         });
     }
 
+    function getSignataireWidget(){
+        axios
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/bysignataire/'+params.idsending+'/'+params.signataire,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => {
+                if(response.data.success === true){
+                    setWidget(response.data.data.widget)
+                }
+            }).catch(function (error) {
+            setDisplayDetail(false);
+        });
+    }
 
     const displayWidgetLabel =(e) =>{
         var label ='';
@@ -111,24 +128,30 @@ const Sendboard = ( ) => {
     return (
         <div className='layout-wrapper layout-content-navbar'>
             <div className="layout-container">
-                <Sidebar />
                 <div className="layout-page">
-                    <NavB/>
                     <div className="mx-5 mt-2" id="general_error"></div>
                     <div className="content-wrapper">
                         {/* Start Content*/}
                         <DataLoadingSpinner loader={loader}/>
                         <div className="row"  id="">
                             <div className="col-md-2">
-                                <div className="text-center" >
-                                    { <img  src={process.env.REACT_APP_BACKEND_ASSET_BASE_URL+"previews/"+sendingData["document"]?.[0]?.preview}  alt="Avatar" className="" width="175"/> || <Skeleton />
-                                    }
-                                </div>
                             </div>
                             <div className="col-md-8">
                                 <div id="sticky-wrapper" className="sticky-wrapper" >
                                     <div  className="card-header" >
-                                        <p className="card-title mb-sm-0 me-2">{title}</p>
+                                        <div className="d-flex justify-content-between">
+                                            <div>
+                                                <p className="card-title mb-sm-0">{title}</p>
+                                            </div>
+
+                                                <div className="">
+                                                    <button type="submit" className="btn btn-primary" id="sbt_btn">
+                                                        <span className="spinner-border d-none" role="status" aria-hidden="true" id="spinner_btn" />
+                                                        Enregistrer
+                                                    </button>
+                                                </div>
+
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="" id="main-container" style={{height: "900px", overflowY: "auto",overflowX:"hidden"}} >
@@ -141,7 +164,7 @@ const Sendboard = ( ) => {
                                                             <div className="jss263 widget_space" id={"widget_space_"+l.page} data-page={l.page}>
                                                                 {config
                                                                     .map((s, i) => {
-                                                                        if(l.page==s.page){
+                                                                        if(l.page===s.page){
                                                                             return (
                                                                                 <div key ={i}
                                                                                      className="drop-item form-group"

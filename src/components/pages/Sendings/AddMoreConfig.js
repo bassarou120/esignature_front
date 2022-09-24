@@ -8,6 +8,8 @@ import Sidebar from "../../Sidebar";
 import NavB from "../../Nav";
 import ProfileUlHeader from "../../Sample/ProfileUlHeader";
 import Footer from "../../Footer";
+
+
 window.$ = $;
 
 
@@ -20,7 +22,66 @@ const AddMoreConfig = (props) => {
     const location = useLocation();
     const [display_detail, setDisplayDetail] = useState(false);
     const [widget, setWidget] = useState('');
+    const [sending, setSending] = useState([]);
     const signataires = getStateVal(location).length === 0 ? JSON.parse(localStorage.getItem('signataires')) : getStateVal(location);
+    var i =[];
+    if(signataires.length !==0){
+        $.each(signataires, function( index, value ) {
+            i.push({
+                name:value.value,
+                email:'',
+                type:'Signataire',
+            })
+        });
+    }
+    const [signataireAndValidataire, setSignataireAndValidataire] = useState( i)
+    const [cc, setCc] = useState([{ name: "", email : ""}])
+
+    let handleChange = (i, e) => {
+        let newFormValues = [...signataireAndValidataire];
+        if(sending.type_signature[0].type==='avanced'){
+            if(e.target.name==='type'){
+               window['showErrorToast']('Vous ne pouvez pas ajouter un signataire pour ce type de signature')
+                newFormValues[i][e.target.name] ='Validataire';
+            }
+        }
+        else{
+            newFormValues[i][e.target.name] = e.target.value;
+        }
+        setSignataireAndValidataire(newFormValues);
+    }
+
+    let addFormFields = () => {
+        if(sending.type_signature[0].type==='avanced'){
+            setSignataireAndValidataire([...signataireAndValidataire, { name: "", email: "",type:"Validataire" }])
+        }
+        else{
+            setSignataireAndValidataire([...signataireAndValidataire, { name: "", email: "",type:"" }])
+        }
+
+    }
+
+    let removeFormFields = (i) => {
+        let newFormValues = [...signataireAndValidataire];
+        newFormValues.splice(i, 1);
+        setSignataireAndValidataire(newFormValues)
+    }
+
+    let handleChangeCc = (i, e) => {
+        let newFormValues = [...cc];
+        newFormValues[i][e.target.name] = e.target.value;
+        setCc(newFormValues);
+    }
+
+    let addFormFieldsCc = () => {
+        setCc([...cc, { name: "", email: "" }])
+    }
+
+    let removeFormFieldsCc = (i) => {
+        let newFormValues = [...cc];
+        newFormValues.splice(i, 1);
+        setCc(newFormValues)
+    }
 
     function getStateVal(ele) {
         if (typeof (ele.state) !== 'undefined') {
@@ -38,6 +99,15 @@ const AddMoreConfig = (props) => {
     const history = useHistory();
 
     useEffect(() => {
+        $('body').on('click', '.new_row', function (e) {
+            e.stopPropagation();
+            return false;
+        })
+
+        $('body').on('click', '.delete_row', function (e) {
+            e.stopPropagation();
+            return false;
+        })
 
         var formRepeater = $(".form-repeater");
         var row = 2;
@@ -50,7 +120,7 @@ const AddMoreConfig = (props) => {
 
         var col = 1;
 
-        formRepeater.repeater({
+       /* formRepeater.repeater({
             show: function () {
                 var fromControl = $(this).find('.form-control, .form-select');
                 var formLabel = $(this).find('.form-label');
@@ -68,7 +138,7 @@ const AddMoreConfig = (props) => {
             hide: function (e) {
                 window.confirm('Are you sure you want to delete this element?') && $(this).slideUp(e);
             }
-        });
+        });*/
 
         // Start
         var formRepeaterCc = $(".form-repeater-cc");
@@ -78,7 +148,8 @@ const AddMoreConfig = (props) => {
         formRepeaterCc.on('submit', function (e) {
             e.preventDefault();
         });
-        formRepeaterCc.repeater({
+
+       /* formRepeaterCc.repeater({
             show: function () {
                 var fromControl = $(this).find('.form-control, .form-select');
                 var formLabel = $(this).find('.form-label');
@@ -97,7 +168,7 @@ const AddMoreConfig = (props) => {
             hide: function (e) {
                 window.confirm('Are you sure you want to delete this element?') && $(this).slideUp(e);
             }
-        });
+        });*/
 
         getSendingDetail();
 
@@ -107,14 +178,20 @@ const AddMoreConfig = (props) => {
 
     const getSendingDetail = (e) => {
         axios
-            .get('/esignature/sendings/' + id)
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/' + id,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
             .then(response => {
                 if (response.data.success === true) {
-                    if (response.data.data.is_config) {
+                    if (response.data.data.is_config===0 || !response.data.data.is_config) {
                         setDisplayDetail(true);
                         setWidget(response.data.data.configuration);
+                        setSending(response.data.data);
                     } else {
-                        setDisplayDetail(true);
+                        setDisplayDetail(false);
                     }
                 }
             }).catch(function (error) {
@@ -128,69 +205,25 @@ const AddMoreConfig = (props) => {
 
     const endSendingForm = (e) => {
         e.preventDefault();
-        // if (!$("#chooseSignatureType").valid()) return false
 
         window['startspinner']();
-
-        var signataire = [];
-
-        var myDiv = $('.si_class');
-        $.each(myDiv, function (index, value) {
-            var i = index + 1;
-            var t = '#form-repeater-' + i + '-1';
-            var type = "signataires[" + index + "][type]";
-
-            var name = "signataires[" + index + "][name]";
-
-            var email = "signataires[" + index + "][email]";
-
-            // if($(t).val()==='' || $(t).val()===undefined){
-            //     signataire.push({
-            //         type: $('input[name="' + type + '"]').val(),
-            //         name: $('input[name="' + name + '"]').val(),
-            //         email: $('input[name="' + email + '"]').val(),
-            //     })
-            // }
-            // else{
-            signataire.push({
-                type: $(t).val(),
-                name: $('input[name="' + name + '"]').val(),
-                email: $('input[name="' + email + '"]').val(),
-            })
-            //  }
-        });
-
-        var myDiv2 = $('.si_class_map');
-        $.each(myDiv2, function (index, value) {
-            signataire.push({
-                type: $(this).find("#map-1-1").val(),
-                name: $(this).find("#map-1-2").val(),
-                email: $(this).find("#map-1-3").val(),
-            })
-        });
-
-        var cc = [];
-        var myDiv1 = $('.cc_class');
-        $.each(myDiv1, function (index, value) {
-            var name = "cc[" + index + "][name]";
-            var email = "cc[" + index + "][email]";
-            cc.push({
-                type: $('input[name="' + name + '"]').val(),
-                email: $('input[name="' + email + '"]').val(),
-            })
-        });
 
         var data = new FormData(this)
         data.append('id', id)
         data.append('objet', objet)
         data.append('message', message)
-        data.append('signataire', JSON.stringify(signataire))
+        data.append('signataire', JSON.stringify(signataireAndValidataire))
         data.append('cc', JSON.stringify(cc))
         data.append('expiration', expiration)
         data.append('rappel', rappel)
 
         axios
-            .put('/esignature/sendings/' + id, Object.fromEntries(data))
+            .put(process.env.REACT_APP_API_BASE_URL+'sendings/' + id, Object.fromEntries(data),{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
             .then(response => {
 
                 if (response.data.success === true) {
@@ -199,18 +232,14 @@ const AddMoreConfig = (props) => {
                     window['showSuccessToast']('Opération réussie !!')
                     // var id=  response.data.data.id;
                     // window.location = "/detail/sending/"+id;
-                    localStorage.clear();
+                    localStorage.removeItem('widgets');
+                    localStorage.removeItem('signataires');
                     history.push('/detail/sending/' + id);
 
                 } else {
                     console.log('error');
                 }
             });
-    }
-
-    const handleChange = (e) => {
-        var value = e.target.value;
-        console.log(e.target.next())
     }
 
     const ExpirationInputChange = (e) => {
@@ -249,17 +278,6 @@ const AddMoreConfig = (props) => {
     }
 
 
-    $('body').on('click', '.new_row', function (e) {
-        e.stopPropagation();
-        return false;
-    })
-
-    $('body').on('click', '.delete_row', function (e) {
-        e.stopPropagation();
-        return false;
-    })
-
-
     return (
         <div className='layout-wrapper layout-content-navbar layout-without-menu'>
             <div className="layout-container">
@@ -291,66 +309,44 @@ const AddMoreConfig = (props) => {
                                     </div>
                                     <div className="card-body">
                                         <div className="form-repeater">
-                                            {signataires.map((l, k) => <div key={k} >
+                                            {signataireAndValidataire.map((l, k) => <div key={k} >
                                                     <div className='si_class_map'>
                                                         <div className="row">
                                                             <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
                                                                 <label className="form-label" htmlFor="map-1-1" >Type</label>
-                                                                <select id="map-1-1" name="type" className="form-select" >
-                                                                    <option value="Signataire">Signataire</option>
+                                                                <select id="map-1-1" name="type" value={l.type}  className="form-select" onChange={e => handleChange(k, e)}>
+                                                                    <option value="Signataire" >Signataire</option>
+                                                                    <option value="Validataire">Validataire</option>
                                                                 </select>
                                                             </div>
                                                             <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
                                                                 <label className="form-label" htmlFor="map-1-2">Nom</label>
-                                                                <input type="text" id="map-1-2" name="name" className="form-control" defaultValue={l.value}
-                                                                       placeholder="Signataire" data-oldvalue={l.value} onChange={e => UpdateSignataire(e)} />
+                                                                <input type="text" id="map-1-2" name="name" className="form-control" defaultValue={l.name}
+                                                                       placeholder="Signataire" data-oldvalue={l.name} onChange={e => handleChange(k, e)} />
                                                             </div>
                                                             <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
                                                                 <label className="form-label" htmlFor="map-1-3">Email</label>
-                                                                <input type="email" id="map-1-3" name="email" className="form-control" onChange={e => ''}
+                                                                <input type="email" id="map-1-3" name="email" className="form-control" defaultValue={l.email} onChange={e => handleChange(k, e)}
                                                                        placeholder="signataire@gmail.com" />
+                                                                {
+                                                                    k ?
+                                                                        <button type="button"  className="button remove" onClick={() => removeFormFields(k)}>Supprimer</button>
+                                                                        : null
+                                                                }
                                                             </div>
+
                                                         </div>
-                                                        <hr />
+
                                                     </div>
                                                 </div>
                                             )}
-                                            <div data-repeater-list="signataires" >
-                                                <div className='si_class' data-repeater-item>
-                                                    <div className="row">
-                                                        <div className="mb-3 col-lg-6 col-xl-3 col-12 mb-0">
-                                                            <label className="form-label" htmlFor="form-repeater-1-1" >Type</label>
-                                                            <select id="form-repeater-1-1" name="type" className="form-select" >
-                                                                {/*<option value="Signataire">Signataire</option>*/}
-                                                                <option value="Validataire">Validataire</option>
-                                                            </select>
-                                                        </div>
-                                                        <div className="mb-3 col-lg-6 col-xl-3 col-12 mb-0">
-                                                            <label className="form-label" htmlFor="form-repeater-1-1">Nom</label>
-                                                            <input type="text" id="form-repeater-1-2" name="name" className="form-control"
-                                                                   placeholder="xxxx" />
-                                                        </div>
-                                                        <div className="mb-3 col-lg-6 col-xl-3 col-12 mb-0">
-                                                            <label className="form-label" htmlFor="form-repeater-1-2">Email</label>
-                                                            <input type="email" id="form-repeater-1-3" name="email" className="form-control"
-                                                                   placeholder="xxxx@gmail.com" />
-                                                        </div>
-                                                        <div className="mb-3 col-lg-12 col-xl-3 col-12 d-flex align-items-center mb-0">
-                                                            <button className="btn btn-label-danger mt-4 delete_row" data-repeater-delete>
-                                                                <i className="bx bx-x"></i>
-                                                                <span className="align-middle">Supprimer</span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <hr />
+                                                <div className="mb-0">
+                                                    <button className="btn btn-primary new_row" onClick={() => addFormFields()} >
+                                                        <i className="bx bx-plus"></i>
+                                                        <span className="align-middle">Ajouter</span>
+                                                    </button>
                                                 </div>
-                                            </div>
-                                            <div className="mb-0">
-                                                <button className="btn btn-primary new_row" data-repeater-create >
-                                                    <i className="bx bx-plus"></i>
-                                                    <span className="align-middle">Ajouter</span>
-                                                </button>
-                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -388,30 +384,33 @@ const AddMoreConfig = (props) => {
                                     <div className="card-body">
                                         <div className="form-repeater-cc">
                                             <div data-repeater-list="cc">
-                                                <div className='cc_class' id="for_cc" data-repeater-item>
-                                                    <div className="row">
-                                                        <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
-                                                            <label className="form-label" htmlFor="cc-1-1">Nom</label>
-                                                            <input type="text" id="cc-1-1" name="name" className="form-control"
-                                                                   placeholder="Cc" />
-                                                        </div>
-                                                        <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
-                                                            <label className="form-label" htmlFor="cc-1-2">Email</label>
-                                                            <input type="email" id="cc-1-2" name="email" className="form-control"
-                                                                   placeholder="cc@gmail.com" />
-                                                        </div>
-                                                        <div className="mb-3 col-lg-12 col-xl-2 col-12 d-flex align-items-center mb-0">
-                                                            <button className="btn btn-label-danger delete_row mt-4" data-repeater-delete>
-                                                                <i className="bx bx-x"></i>
-                                                                <span className="align-middle">Supprimer</span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <hr />
+                                                <div className='cc_class' id="for_cc">
+                                                    {cc.map((element, index) => (
+                                                            <div className="row" key={index}>
+                                                                <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
+                                                                    <label className="form-label" htmlFor="cc-1-1">Nom</label>
+                                                                    <input type="text" id="cc-1-1" name="name" className="form-control"
+                                                                           placeholder="Cc" />
+                                                                </div>
+                                                                <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
+                                                                    <label className="form-label" htmlFor="cc-1-2">Email</label>
+                                                                    <input type="email" id="cc-1-2" name="email" className="form-control"
+                                                                           placeholder="cc@gmail.com" />
+                                                                </div>
+                                                                <div className="mb-3 col-lg-12 col-xl-2 col-12 d-flex align-items-center mb-0">
+                                                                            <button className="btn btn-label-danger delete_row mt-4" onClick={() => removeFormFieldsCc(index)} >
+                                                                                <i className="bx bx-x"></i>
+                                                                                <span className="align-middle">Supprimer</span>
+                                                                            </button>
+                                                                </div>
+                                                            </div>
+
+                                                    ))}
+
                                                 </div>
                                             </div>
                                             <div className="mb-0">
-                                                <button className="btn btn-primary new_row" data-repeater-create>
+                                                <button className="btn btn-primary new_row" onClick={() => addFormFieldsCc()}>
                                                     <i className="bx bx-plus"></i>
                                                     <span className="align-middle">Ajouter</span>
                                                 </button>

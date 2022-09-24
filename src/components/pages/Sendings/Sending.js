@@ -818,7 +818,7 @@ const Sending = (props) => {
                             </p>
                         </Modal.Body>
                         <Modal.Footer>
-                            <button type="button" className="btn btn-label-secondary"
+                            <button type="button" className="btn btn-label-secondary btn-sm"
                                     onClick={handleClose}>Fermer
                             </button>
                             <button type="button" className="btn btn-primary btn-sm" onClick={userLeavingPage}>Ok</button>

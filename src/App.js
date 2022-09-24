@@ -75,7 +75,12 @@ const App = () => {
                 phone_number:object.phone_number,
                 entreprise:object.entreprise,
             })
-            setCanDisplayChoiceModal(true);
+            let ec = '/sendboard';
+            let l = window.location.pathname;
+            if(!l.includes(ec)){
+                setCanDisplayChoiceModal(true);
+            }
+
         }
         else{
             if(!array.includes(window.location.pathname)){
