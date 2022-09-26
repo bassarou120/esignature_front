@@ -196,6 +196,7 @@ const Sending = (props) => {
                 }
             })
 
+            localStorage.removeItem('widgets');
         }
 
         $('#addNewTag').click(function(){

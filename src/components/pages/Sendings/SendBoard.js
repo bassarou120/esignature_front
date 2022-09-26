@@ -30,6 +30,7 @@ const Sendboard = ( ) => {
     const handleShow = () => setShow(true);
 
     useEffect(() => {
+        console.log('use effet')
         getSendingInfo();
         getSignataireWidget();
     } )
@@ -154,6 +155,7 @@ const Sendboard = ( ) => {
                                         </div>
                                     </div>
                                 </div>
+{/*
                                 <div className="" id="main-container" style={{height: "900px", overflowY: "auto",overflowX:"hidden"}} >
                                     <div className="">
                                         <ul className="jss228" id="parent_ul">
@@ -174,8 +176,8 @@ const Sendboard = ( ) => {
                                                                                      style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`}}
 
                                                                                 >
-                                                                                    <label><p style={{fontSize:"10px"}}
-                                                                                              className="text-white">{displayWidgetLabel(s.type_widget)}</p>
+                                                                                    <label>
+                                                                                        <p style={{fontSize:"10px"}} className="text-white">{displayWidgetLabel(s.type_widget)}</p>
                                                                                     </label>
 
                                                                                 </div>
@@ -197,6 +199,7 @@ const Sendboard = ( ) => {
                                         </ul>
                                     </div>
                                 </div>
+*/}
                             </div>
                             <div className="col-xl-2 col-md-2 col-12">
                             </div>
