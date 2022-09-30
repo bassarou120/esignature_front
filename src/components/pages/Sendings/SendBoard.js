@@ -2,12 +2,15 @@ import axios from "axios";
 import React, {useEffect, useState} from "react";
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
-import Sidebar from "../../Sidebar";
-import NavB from "../../Nav";
 import Footer from "../../Footer";
 import DataLoadingSpinner from "../../DataLoadingSpinner";
 import Skeleton from "react-loading-skeleton";
 import {useParams} from "react-router-dom";
+import Modal from "react-bootstrap/Modal";
+import SignatureCanva from "../../SignatureCanva";
+import styles from "../../styles.module.css";
+import SignaturePad from "react-signature-canvas";
+
 window.$ = $;
 
 
@@ -15,25 +18,54 @@ const Sendboard = ( ) => {
     const params = useParams();
     const [state, setState] = useState('');
     const [title, setTitle] = useState('');
+    const [ipInfo, setIpInfo] = useState('');
     const [display_detail, setDisplayDetail] = useState(false);
     const [sendingData, setSendingData] = useState([ ]);
     const [loader, setLoader] = useState(true);
     const [imglist, setImglist] = useState([]);
-    const [is_required,setIs_required]=useState(false);
+    const [canDisplay,setCanDisplay]=useState(false);
+    const [asAnswer,setAsAnswer]=useState(false);
+    const [agree, setAgree] = useState(false);
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const [config, setConfig] = useState([]);
     const [widget, setWidget] = useState([]);
+    const [signature_url, setSignature_url] = useState([]);
+    const [signataire_answer, setSignataire_answer] = useState([]);
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     useEffect(() => {
-        console.log('use effet')
-        getSendingInfo();
-        getSignataireWidget();
-    } )
+        var c =canAccessPage()
+        if (c){
+            getSendingInfo();
+            getSignataireWidget();
+            $.getJSON('https://api.db-ip.com/v2/free/self', function(data) {
+                setIpInfo(JSON.stringify(data, null, 2));
+            });
+        }
+    }, [])
+
+    function canAccessPage(){
+        var can =localStorage.getItem('already_signed');
+        if(can !== null){
+            var a = JSON.parse(can)
+            if(a.sending===params.idsending && a.signataire===params.signataire){
+                setCanDisplay(false)
+                return false;
+            }
+            else{
+                setCanDisplay(true)
+                return true;
+            }
+        }
+        else{
+            setCanDisplay(true)
+            return true;
+        }
+    }
 
     function getSendingInfo(){
         axios
@@ -86,7 +118,15 @@ const Sendboard = ( ) => {
             })
             .then(response => {
                 if(response.data.success === true){
-                    setWidget(response.data.data.widget)
+                    var w = JSON.parse(response.data.data.widget)
+                    setWidget(w)
+                    if(response.data.data.signataire_answer){
+                        setAsAnswer(false)
+                    }
+                    else{
+                        setAsAnswer(true)
+                    }
+
                 }
             }).catch(function (error) {
             setDisplayDetail(false);
@@ -126,94 +166,278 @@ const Sendboard = ( ) => {
         return label ;
     }
 
-    return (
-        <div className='layout-wrapper layout-content-navbar'>
-            <div className="layout-container">
-                <div className="layout-page">
-                    <div className="mx-5 mt-2" id="general_error"></div>
-                    <div className="content-wrapper">
-                        {/* Start Content*/}
-                        <DataLoadingSpinner loader={loader}/>
-                        <div className="row"  id="">
-                            <div className="col-md-2">
-                            </div>
-                            <div className="col-md-8">
-                                <div id="sticky-wrapper" className="sticky-wrapper" >
-                                    <div  className="card-header" >
-                                        <div className="d-flex justify-content-between">
-                                            <div>
-                                                <p className="card-title mb-sm-0">{title}</p>
-                                            </div>
+    const displayForm = (e) =>{
+        var text_field = ['name','first_name','last_name','entreprise','city','text_field'];
+        var number_field = ['age','number_field'];
+        var select_field = [];
+        var signature_field = ['signature'];
+        var image_field = ['image'];
+        var form = [];
+        {widget.map((s, i) => {
+            var cas = '';
+            if(text_field.includes(s.type_widget)){
+                cas = 'text_field';
+            }
+            if(number_field.includes(s.type_widget)){
+                cas = 'number_field';
+            }
+            if(select_field.includes(s.type_widget)){
+                cas = 'select_field';
+            }
+            if(signature_field.includes(s.type_widget)){
+                cas = 'signature_field';
+            }
+            if(image_field.includes(s.type_widget)){
+                cas = 'image_field';
+            }
+            switch (cas) {
+                case 'text_field':
+                    form.push(<div key={i} className="mb-3">
+                        <label htmlFor={s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                            {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                        </label>
+                        <input type="text" className="form-control" id={s.widget_id} required={s.required === true } placeholder="Text" />
+                    </div>)
+                    break;
+                case 'number_field':
+                    form.push(<div  key={i} className="mb-3">
+                        <label htmlFor={s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                            {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                        </label>
+                        <input type="number" className="form-control" id={s.widget_id} required={s.required === true } placeholder="Text"/>
+                    </div>)
+                    break;
+                case 'select_field':
+                    form.push(<div  key={i} className="mb-3">
+                          <label htmlFor="exampleFormControlSelect1" className="form-label">Example select
+                              {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                          </label>
+                          <select className="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
+                              <option selected>Open this select menu</option>
+                              <option value="1">One</option>
+                              <option value="2">Two</option>
+                              <option value="3">Three</option>
+                          </select>
+                        </div>)
+                    break;
+                case 'signature_field':
+                    form.push( <div className="mb-3" key={i}>
+                        <label htmlFor={s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                            {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                        </label>
+                        <SignatureCanva signatureUrl={signature_url} setSignatureUrl={setSignature_url} id={s.widget_id} key={i} />
+                        <span id="signature_error" className="text-danger text-center"></span>
+                    </div>)
+                    break;
+                case 'image_field':
+                    form.push( <div key={i} className="mb-3">
+                           <label htmlFor={s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                               {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                           </label>
+                           <input className="form-control" type="file" id={s.widget_id} required={s.required === true }/>
+                         </div>)
+                    break;
+                default:
+                    return null;
+            }
+            })}
+        return form;
+    }
 
-                                                <div className="">
-                                                    <button type="submit" className="btn btn-primary" id="sbt_btn">
-                                                        <span className="spinner-border d-none" role="status" aria-hidden="true" id="spinner_btn" />
-                                                        Enregistrer
-                                                    </button>
+    const fillForm =(e)=>{
+        e.preventDefault();
+        var answer =[];
+        $("#form_answer input").each(function( index ) {
+            if($(this).attr('id')!=='confirm'){
+                answer.push({
+                    id:$(this).attr('id'),
+                    value:$(this).val(),
+                })
+            }
+        });
+
+        if(sendingData.type_signature[0].type =="avanced" && signature_url==''){
+            $('#signature_error').html('La signature est obligatoire')
+        }
+        else{
+            answer.push({
+                signature:signature_url
+            })
+            setSignataire_answer(JSON.stringify(answer));
+            sendData();
+        }
+    }
+
+    const sendData=(e)=>{
+       axios
+            .put(process.env.REACT_APP_API_BASE_URL+'sendings/doc/signed',{
+                id_sending : params.idsending,
+                id_signataire:params.signataire,
+                answer:signataire_answer,
+                mobile_info: JSON.stringify({
+                    userAgent:window.navigator.userAgent,
+                    ipAdress:ipInfo
+                }),
+            },{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => {
+                if(response.data.success===true){
+                    var arr = {
+                        sending: params.idsending,
+                        signataire: params.signataire
+                    }
+                    localStorage.setItem('already_signed',JSON.stringify(arr))
+                    window['showSuccessToast']('Réponse envoyée avec succès')
+                    handleClose();
+                }
+            }).catch(function (error) {
+            if (error.response) {
+                console.log('error');
+            }
+        });
+    }
+
+    const changeReadAndOk =(e)=>{
+        setAgree(!agree);
+    }
+    if(canDisplay){
+        return (
+            <div className='layout-wrapper layout-content-navbar'>
+                <div className="layout-container">
+                    <div className="layout-page">
+                        <div className="mx-5 mt-2" id="general_error"></div>
+                        <div className="content-wrapper">
+                            <DataLoadingSpinner loader={loader}/>
+                            <div className="row"  id="">
+                                <div className="col-md-2">
+                                </div>
+                                <div className="col-md-8">
+                                    <div id="sticky-wrapper" className="sticky-wrapper" >
+                                        <div  className="card-header" >
+                                            <div className="d-flex justify-content-between">
+                                                <div>
+                                                    <p className="card-title mb-sm-0">{title}</p>
                                                 </div>
 
+                                                {asAnswer &&
+                                                <div className="">
+                                                    <div className="demo-inline-spacing">
+                                                        <button type="submit" className="btn btn-primary" id="open_form" onClick={handleShow}>
+                                                            Remplir comme un formulaire
+                                                        </button>
+                                                        {/*<button type="submit" className=" btn btn-primary" id="sbt_btn" onClick={sendData}>*/}
+                                                        {/*    <span className="spinner-border d-none" role="status" aria-hidden="true" id="spinner_btn" />*/}
+                                                        {/*    Envoyer*/}
+                                                        {/*</button>*/}
+                                                    </div>
+                                                </div>
+                                                }
+
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-{/*
-                                <div className="" id="main-container" style={{height: "900px", overflowY: "auto",overflowX:"hidden"}} >
-                                    <div className="">
-                                        <ul className="jss228" id="parent_ul">
-                                            {
-                                                imglist.map((l,k)=>  <div key={k} id={"img_page_"+l.page} className="jss255 dropzone">
-                                                    <div className="jss257">
-                                                        <div className="jss262 ">
-                                                            <div className="jss263 widget_space" id={"widget_space_"+l.page} data-page={l.page}>
-                                                                {config
-                                                                    .map((s, i) => {
-                                                                        if(l.page===s.page){
-                                                                            return (
-                                                                                <div key ={i}
-                                                                                     className="drop-item form-group"
-                                                                                     id={s?.widget_id} data-widget-type={s?.type_widget}
-                                                                                     data-signataire={s?.signataire} data-page={s?.page}
-                                                                                     data-isrequired={s.required}
-                                                                                     style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`}}
+                                    <Modal show={show} onHide={handleClose}  backdrop="static"
+                                           keyboard={false}>
+                                        <form id="form_answer" onSubmit={fillForm}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>Renseigner le formulaire</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                <div className="d-flex flex-row-reverse">
+                                                    <small className="text-danger">(*) Obligatoire</small>
+                                                </div>
+                                                <div>
+                                                    {displayForm()}
+                                                    <div className="form-check form-check-inline mt-3">
+                                                        <input className="form-check-input" type="checkbox"
+                                                               id="confirm" onChange={changeReadAndOk}/>
+                                                            <label className="form-check-label"
+                                                                   htmlFor="confirm">J'ai lu et j'approuve</label>
+                                                    </div>
+                                                </div>
+                                            </Modal.Body>
+                                            <Modal.Footer>
+                                                <button type="button" className="btn btn-label-secondary"
+                                                        onClick={handleClose}>Fermer
+                                                </button>
+                                                <button className={`btn btn-primary ${agree ? "" : "disabled"}`} type="submit" id="sbt_btn">
+                                                <span className="spinner-border d-none" role="status" aria-hidden="true"
+                                                      id="spinner_btn"></span>
+                                                    Enregistrer
+                                                </button>
+                                            </Modal.Footer>
+                                        </form>
+                                    </Modal>
 
-                                                                                >
-                                                                                    <label>
-                                                                                        <p style={{fontSize:"10px"}} className="text-white">{displayWidgetLabel(s.type_widget)}</p>
-                                                                                    </label>
+                                    <div className="" id="main-container" style={{height: "900px", overflowY: "auto",overflowX:"hidden"}} >
+                                        <div className="">
+                                            <ul className="jss228" id="parent_ul">
+                                                {
+                                                    imglist.map((l,k)=>  <div key={k} id={"img_page_"+l.page} className="jss255">
+                                                        <div className="jss257">
+                                                            <div className="jss262 ">
+                                                                <div className="jss263" id={"widget_space_"+l.page} data-page={l.page}>
+                                                                    {widget
+                                                                        .map((s, i) => {
+                                                                            if(l.page==s.page){
+                                                                                return (
+                                                                                    <div key ={i}
+                                                                                         className="drop-item form-group"
+                                                                                         id={s?.widget_id} data-widget-type={s?.type_widget}
+                                                                                         data-signataire={s?.signataire} data-page={s?.page}
+                                                                                         data-isrequired={s.required}
+                                                                                         style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`,cursor:'pointer'}}
 
-                                                                                </div>
-                                                                            );
-                                                                        }
-                                                                        else{
-                                                                            return null ;
-                                                                        }
-                                                                    })}
+                                                                                    >
+                                                                                        <label>
+                                                                                            <p style={{fontSize:"10px"}} className="text-white">{displayWidgetLabel(s.type_widget)}</p>
+                                                                                        </label>
+
+                                                                                    </div>
+                                                                                );
+                                                                            }
+                                                                            else{
+                                                                                return null ;
+                                                                            }
+                                                                        })}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    {<img className="jss256 "
-                                                          src={l.src}
-                                                          data-signa="document-editor-container" width="98%"/> || <Skeleton />}
-                                                </div>)
-                                            }
-                                            <span style={{fontSize: "0px"}}></span>
-                                        </ul>
+                                                        {<img className="jss256 "
+                                                              src={l.src}
+                                                              data-signa="document-editor-container" width="98%"/> || <Skeleton />}
+                                                    </div>)
+                                                }
+                                                <span style={{fontSize: "0px"}}></span>
+                                            </ul>
+                                        </div>
                                     </div>
+
                                 </div>
-*/}
+                                <div className="col-xl-2 col-md-2 col-12">
+                                </div>
                             </div>
-                            <div className="col-xl-2 col-md-2 col-12">
-                            </div>
+
+                            <Footer/>
+                            <div className="content-backdrop fade"></div>
                         </div>
-                        {/* End Content*/}
-                        <Footer/>
-                        <div className="content-backdrop fade"></div>
                     </div>
                 </div>
+                <div className="layout-overlay layout-menu-toggle"/>
+                <div className="drag-target"/>
             </div>
-            <div className="layout-overlay layout-menu-toggle"/>
-            <div className="drag-target"/>
-        </div>
-    );
+        );
+    }
+    else{
+        return(
+        <h4 className="text-center">Action impossible</h4>
+        )
+    }
+
 }
 
 export default Sendboard;

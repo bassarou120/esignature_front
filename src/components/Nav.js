@@ -42,7 +42,7 @@ const NavB = ( ) => {
 
                     <ul className="navbar-nav flex-row align-items-center ms-auto">
 
-                        <li className="nav-item dropdown-language dropdown me-2 me-xl-0">
+                        {/*<li className="nav-item dropdown-language dropdown me-2 me-xl-0">
                             <a className="nav-link dropdown-toggle hide-arrow" href="#"
                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <i className="text-center">Francais</i>
@@ -61,7 +61,7 @@ const NavB = ( ) => {
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li>*/}
 
                         <li className="nav-item me-2 me-xl-0">
                             <a className="nav-link style-switcher-toggle hide-arrow" href=""

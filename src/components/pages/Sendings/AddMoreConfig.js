@@ -44,6 +44,9 @@ const AddMoreConfig = (props) => {
                window['showErrorToast']('Vous ne pouvez pas ajouter un signataire pour ce type de signature')
                 newFormValues[i][e.target.name] ='Validataire';
             }
+            else{
+                newFormValues[i][e.target.name] = e.target.value;
+            }
         }
         else{
             newFormValues[i][e.target.name] = e.target.value;
@@ -276,7 +279,6 @@ const AddMoreConfig = (props) => {
         });
 
     }
-
 
     return (
         <div className='layout-wrapper layout-content-navbar layout-without-menu'>

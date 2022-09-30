@@ -336,7 +336,6 @@ const Member = ( ) => {
                                                   id="spinner_btn"></span>
                                             Enregistrer
                                         </button>
-
                                     </Modal.Footer>
                                 </form>
                             </Modal>

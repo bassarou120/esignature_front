@@ -390,6 +390,7 @@ const Sending = (props) => {
                         for (var i = 1; i <= n; i++) {
                             inter.push({page:i,src:process.env.REACT_APP_BACKEND_ASSET_BASE_URL+"previews/"+folder+'/'+i+'.jpeg'} );
                         }
+                        localStorage.removeItem('widgets');
                         if (response.data.data["configuration"] == null){
                             localStorage.setItem('widgets', JSON.stringify([]));
                         }
@@ -729,6 +730,7 @@ const Sending = (props) => {
             r[a.signataire].push(a);
             return r;
         }, Object.create(null));
+
         axios
             .put(process.env.REACT_APP_API_BASE_URL+'sendings/add/signataires/'+id,{
                 signataires : $('#TagifyEmailList').val(),
