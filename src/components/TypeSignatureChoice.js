@@ -38,8 +38,8 @@ const TypeSignatureChoice = ( props) => {
                                htmlFor="customRadioHome">
                                                         <span className="custom-option-body">
                                                             <i className='bx bx-certification'/>
-                                                          <span className="custom-option-title">Avancée</span>
-                                                          <small> Signature avancée </small>
+                                                          <span className="custom-option-title">Certifiée</span>
+                                                          <small> Signature certifiée </small>
                                                         </span>
                             <input name="customRadioIcon" className="form-check-input"
                                    type="radio" value="1" id="customRadioHome" onChange={e=>handleChange(e.target.value)} />
@@ -52,8 +52,8 @@ const TypeSignatureChoice = ( props) => {
                                htmlFor="customRadioOffice">
                                                         <span className="custom-option-body">
                                                             <i className="fa fa-mouse-pointer" aria-hidden="true"/>
-                                                          <span className="custom-option-title"> Simple </span>
-                                                          <small> Signature simple </small>
+                                                          <span className="custom-option-title"> Qualifiée </span>
+                                                          <small> Signature qualifiée </small>
                                                         </span>
                             <input name="customRadioIcon" className="form-check-input"
                                    type="radio" value="2" id="customRadioOffice" onChange={e =>handleChange(e.target.value)} />

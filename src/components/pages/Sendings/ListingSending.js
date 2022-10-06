@@ -195,9 +195,9 @@ const ListingSending = () => {
             <tbody>
             {elementToDisplay.length!==0 ? elementToDisplay.map((l,k) => <tr key={k}>
                 <td>{itemOffset + k + 1}</td>
-                <td>{l.document[0].title}</td>
+                <td>{truncate(l.document[0].title,35) }</td>
                 <td>{l.created_at}</td>
-                <td>{l.nbre_signataire}</td>
+                <td className="text-center">{l.nbre_signataire}</td>
                 <td>{ renderSpanStatut(l.statut[0].name)}</td>
                 <td>
                     {/*<div className="dropdown">
@@ -265,6 +265,10 @@ const ListingSending = () => {
           setSearchVal('');
        }
     }
+
+    const truncate = (str, n) => {
+        return (str.length > n) ? str.substr(0, n - 1) + '...' : str;
+    };
 
     return (
         <div className='layout-wrapper layout-content-navbar'>
@@ -353,12 +357,12 @@ const ListingSending = () => {
                                                style={{"width": "100%"}}>
                                             <thead>
                                             <tr>
-                                                <th>#</th>
+                                                <th style={{"width": "5%"}}>#</th>
                                                 <th style={{"width": "25%"}}>Document</th>
                                                 <th style={{"width": "25%"}}>Date</th>
-                                                <th style={{"width": "15%"}}>Signataire</th>
-                                                <th>Status</th>
-                                                <th>Actions</th>
+                                                <th style={{"width": "10%"}}>Signataire</th>
+                                                <th style={{"width": "15%"}}>Status</th>
+                                                <th style={{"width": "20%"}}>Actions</th>
                                             </tr>
                                             </thead>
                                            <Items elementToDisplay={currentItems} />

@@ -24,6 +24,9 @@ function Dashboard(props) {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    params:{
+                        rows:6
                     }
                 })
                 .then(response => {
@@ -182,19 +185,14 @@ function Dashboard(props) {
 
                                 <div className="col-md-12 col-lg-12 order-2 mb-4">
                                     <div className="card h-100">
+
                                         <div className="card-header d-flex align-items-center justify-content-between">
                                             <h5 className="card-title m-0 me-2">Envois en cours</h5>
-                                            {/*  <div className="dropdown">
-                                <button className="btn p-0" type="button" id="transactionID" data-bs-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
-                                    <i className="bx bx-dots-vertical-rounded"></i>
-                                </button>
-                                <div className="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
-                                    <a className="dropdown-item" href="!#">Last 28 Days</a>
-                                    <a className="dropdown-item" href="!#">Last Month</a>
-                                    <a className="dropdown-item" href="!#">Last Year</a>
-                                </div>
-                            </div>*/}
+                                              <div className="">
+                                                <Link to='/listingsending/pending' className="btn btn-primary text-white" >
+                                                   Plus
+                                                </Link>
+                                              </div>
                                         </div>
                                         <div className="card-body">
                                             <ul className="p-0 m-0">

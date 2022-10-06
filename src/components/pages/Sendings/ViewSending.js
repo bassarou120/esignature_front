@@ -16,6 +16,7 @@ const ViewSending = ( ) => {
     const  { id } = useParams();
     const [sendingData, setSendingData] = useState([ ]);
     const [sendingStatutBySignataire, setSendingStatutBySignataire] = useState([]);
+    const [sendingStatutByValidataire, setSendingStatutByValidataire] = useState([]);
     const [cc, setCc] = useState([ ]);
     const [folder, setFolder] = useState('');
     const [display_detail, setDisplayDetail] = useState(false);
@@ -23,12 +24,11 @@ const ViewSending = ( ) => {
     const [loader, setLoader] = useState(true);
 
 
-
-
     useEffect(() => {
         getSendingDetail();
         getCc();
         getSignataireAndStatus();
+        getValidataireStatus();
         const interval = setInterval(() => {
             getSignataireAndStatus();
         },45*1000);
@@ -104,6 +104,21 @@ const ViewSending = ( ) => {
             });
     }
 
+    const getValidataireStatus = (e)=>{
+        axios
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/get/all/validataire/laststatut/'+id,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => {
+                if(response.data.success === true){
+                    setSendingStatutByValidataire(response.data.data);
+                }
+            });
+    }
+
     const unknowSending = (e) => {
         return (
             <div className=" text-center container-xxl container-p-y">
@@ -131,11 +146,17 @@ const ViewSending = ( ) => {
             for (var i = 0; i < Object.keys(sendingStatutBySignataire).length; i++) {
                 var list_statut=[];
                 var date=[];
-                for (var y=0; y<sendingStatutBySignataire[Object.keys(sendingStatutBySignataire)[i]].length;y++){
-                    list_statut.push(sendingStatutBySignataire[Object.keys(sendingStatutBySignataire)[i]][y].statut)
-                    date.push( sendingStatutBySignataire[Object.keys(sendingStatutBySignataire)[i]][y].date)
+                if(sendingStatutBySignataire[Object.keys(sendingStatutBySignataire)[i]].length){
+                    for (var y=0; y<sendingStatutBySignataire[Object.keys(sendingStatutBySignataire)[i]].length;y++){
+                        list_statut.push(sendingStatutBySignataire[Object.keys(sendingStatutBySignataire)[i]][y].statut)
+                        date.push( sendingStatutBySignataire[Object.keys(sendingStatutBySignataire)[i]][y].date)
+                    }
+                }
+                else{
+                    list_statut.push(sendingStatutBySignataire[Object.keys(sendingStatutBySignataire)[i]].statut)
                 }
                 var dte ='';
+
                 signataireCollapse.push(
                     <div key={i} className="card accordion-item active">
                         <h2 className="accordion-header" id="headingOne">
@@ -151,10 +172,10 @@ const ViewSending = ( ) => {
                                     <div className="col-md-1"></div>
                                     {/*{list_statut.includes('MAIL_ENVOYER')==true ? dte = date[list_statut.indexOf('MAIL_ENVOYER')]  : ''}*/}
                                     <div className="col-md-2">
-                                        <OverlayTrigger trigger="click" placement="right" overlay={popover(list_statut.includes('MAIL_ENVOYER'),'MAIL_ENVOYER',date[list_statut.indexOf('MAIL_REMIS')])}>
+                                        <OverlayTrigger trigger="click" placement="right" overlay={popover(list_statut.includes('ENVOYER'),'ENVOYER',date[list_statut.indexOf('ENVOYER')])}>
                                             <a className="nav-link dropdown-toggle hide-arrow" href="#"
                                                data-bs-toggle="dropdown">
-                                                <div className={`avatar ${list_statut.includes('MAIL_ENVOYER') ? "avatar-online" : "avatar-offline"}`}>
+                                                <div className={`avatar ${list_statut.includes('ENVOYER') ? "avatar-online" : "avatar-offline"}`}>
                                                     <img src="/assets/img/icons/esignature/paper-plane.png" alt=""
                                                          className="w-px-40 h-auto rounded-circle"/>
                                                 </div>
@@ -164,10 +185,10 @@ const ViewSending = ( ) => {
                                     </div>
                                     <div className="col-md-2">
                                         {/*{list_statut.includes('MAIL_REMIS')==true ? dte = date[list_statut.indexOf('MAIL_REMIS')]  : ''}*/}
-                                        <OverlayTrigger trigger="click" placement="right" overlay={popover(list_statut.includes('MAIL_REMIS'),'MAIL_REMIS',date[list_statut.indexOf('MAIL_REMIS')])}>
+                                        <OverlayTrigger trigger="click" placement="right" overlay={popover(list_statut.includes('MAIL_REMIT'),'MAIL_REMIT',date[list_statut.indexOf('MAIL_REMIT')])}>
                                         <a className="nav-link dropdown-toggle hide-arrow" href="#"
                                            data-bs-toggle="dropdown">
-                                            <div className={`avatar ${list_statut.includes('MAIL_REMIS') ? "avatar-online" : "avatar-offline"}`}>
+                                            <div className={`avatar ${list_statut.includes('MAIL_REMIT') ? "avatar-online" : "avatar-offline"}`}>
                                                 <img src="/assets/img/icons/esignature/mail.png" alt=""
                                                      className="w-px-40 h-auto rounded-circle"/>
                                             </div>
@@ -175,10 +196,10 @@ const ViewSending = ( ) => {
                                         </OverlayTrigger>
                                     </div>
                                     <div className="col-md-2">
-                                        <OverlayTrigger trigger="click" placement="right" overlay={popover(list_statut.includes('MAIL_OUVERT'),'MAIL_OUVERT',date[list_statut.indexOf('MAIL_OUVERT')])}>
+                                        <OverlayTrigger trigger="click" placement="right" overlay={popover(list_statut.includes('OPENED_EMAIL_MESSAGE'),'OPENED_EMAIL_MESSAGE',date[list_statut.indexOf('OPENED_EMAIL_MESSAGE')])}>
                                         <a className="nav-link dropdown-toggle hide-arrow" href="#"
                                            data-bs-toggle="dropdown">
-                                            <div className={`avatar ${list_statut.includes('MAIL_OUVERT') ? "avatar-online" : "avatar-offline"}`}>
+                                            <div className={`avatar ${list_statut.includes('OPENED_EMAIL_MESSAGE') ? "avatar-online" : "avatar-offline"}`}>
                                                 <img src="/assets/img/icons/esignature/open.png" alt=""
                                                      className="w-px-40 h-auto rounded-circle"/>
                                             </div>
@@ -186,10 +207,10 @@ const ViewSending = ( ) => {
                                         </OverlayTrigger>
                                     </div>
                                     <div className="col-md-2">
-                                        <OverlayTrigger trigger="click" placement="right" overlay={popover(list_statut.includes('DOCUMENT_OUVERT'),'DOCUMENT_OUVERT',date[list_statut.indexOf('DOCUMENT_OUVERT')])}>
+                                        <OverlayTrigger trigger="click" placement="right" overlay={popover(list_statut.includes('OUVRIR'),'OUVRIR',date[list_statut.indexOf('OUVRIR')])}>
                                         <a className="nav-link dropdown-toggle hide-arrow" href="#"
                                            data-bs-toggle="dropdown">
-                                            <div className={`avatar ${list_statut.includes('DOCUMENT_OUVERT') ? "avatar-online" : "avatar-offline"}`}>
+                                            <div className={`avatar ${list_statut.includes('OUVRIR') ? "avatar-online" : "avatar-offline"}`}>
                                                 <img src="/assets/img/icons/esignature/folder.png" alt=""
                                                      className="w-px-40 h-auto rounded-circle"/>
                                             </div>
@@ -197,10 +218,10 @@ const ViewSending = ( ) => {
                                         </OverlayTrigger>
                                     </div>
                                     <div className="col-md-2">
-                                        <OverlayTrigger trigger="click" placement="right" overlay={popover(list_statut.includes('DOCUMENT_SIGNER'),'DOCUMENT_SIGNER',dte = date[list_statut.indexOf('DOCUMENT_SIGNER')])}>
+                                        <OverlayTrigger trigger="click" placement="right" overlay={popover(list_statut.includes('SIGNER'),'SIGNER',dte = date[list_statut.indexOf('SIGNER')])}>
                                         <a className="nav-link dropdown-toggle hide-arrow" href="#"
                                            data-bs-toggle="dropdown">
-                                            <div className={`avatar ${list_statut.includes('DOCUMENT_SIGNER') ? "avatar-online" : "avatar-offline"}`}>
+                                            <div className={`avatar ${list_statut.includes('SIGNER') ? "avatar-online" : "avatar-offline"}`}>
                                                 <img src="/assets/img/icons/esignature/contract.png" alt=""
                                                      className="w-px-40 h-auto rounded-circle"/>
                                             </div>
@@ -223,19 +244,19 @@ const ViewSending = ( ) => {
         var rtn ='';
         if(has_error===false){
             switch(el) {
-                case 'MAIL_ENVOYER':
+                case 'ENVOYER':
                     rtn ='Erreur de l\'envois du mail. Veuillez vérifier l\'adresse mail que vous avez renseigner';
                     break;
-                case 'MAIL_REMIS':
+                case 'MAIL_REMIT':
                     rtn ='Le mail n\'a pas pu atteindre son destinataire';
                     break;
-                case 'MAIL_OUVERT':
+                case 'OPENED_EMAIL_MESSAGE':
                     rtn ='Mail non ouvert';
                     break;
-                case 'DOCUMENT_OUVERT':
+                case 'OUVRIR':
                     rtn ='Document non ouvert';
                     break;
-                case 'DOCUMENT_SIGNER':
+                case 'SIGNER':
                     rtn ='Document non signer';
                     break;
                 default:
@@ -244,19 +265,19 @@ const ViewSending = ( ) => {
         }
         else{
             switch(el) {
-                case 'MAIL_ENVOYER':
+                case 'ENVOYER':
                     rtn ='Mail envoyer avec succes le '+dte+'';
                     break;
-                case 'MAIL_REMIS':
+                case 'MAIL_REMIT':
                     rtn ='Mail reçu le '+dte+'';
                     break;
-                case 'MAIL_OUVERT':
+                case 'OPENED_EMAIL_MESSAGE':
                     rtn ='Mail ouvert le '+dte+'';
                     break;
-                case 'DOCUMENT_OUVERT':
+                case 'OUVRIR':
                     rtn ='Document ouvert le '+dte+'';
                     break;
-                case 'DOCUMENT_SIGNER':
+                case 'SIGNER':
                     rtn ='Document signer le '+dte+'';
                     break;
                 default:
@@ -316,7 +337,7 @@ const ViewSending = ( ) => {
                                                                 {l?.name} <i className="m-2">{l.email}</i>
                                                                 <div className="d-flex justify-content-end">
                                                                     <button className="btn btn-icon btn-outline-primary ml-1"><i className="fa fa-pen"></i></button>
-                                                                    <button className="btn btn-icon btn-outline-danger "><i className=" fa fa-trash"></i></button>
+                                                                    <button className="btn btn-icon btn-outline-danger "><i className="fa fa-trash"></i></button>
                                                                 </div>
                                                             </li>)}
 
@@ -325,6 +346,36 @@ const ViewSending = ( ) => {
                                                 </div>
                                             </div>
                                             <div className="mt-2 row">
+                                                {sendingStatutByValidataire.length !== 0 &&  <div>
+                                                    <small className="text-light fw-semibold">Validataires</small>
+                                                    <div className="card h-100">
+                                                        <div className="card-body">
+                                                            <ul className="p-0 m-0">
+                                                                {sendingStatutByValidataire.map((l, k) => <li key={k} className="d-flex mb-4 pb-1">
+                                                                    <div className="avatar flex-shrink-0 me-3">
+                                                                        <img
+                                                                            src="/assets/img/icons/esignature/stamp.png"
+                                                                            alt="User" className="rounded"/>
+                                                                    </div>
+                                                                    <div
+                                                                        className="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                        <div className="me-2">
+                                                                            <small
+                                                                                className="text-muted d-block mb-1">{l.signataires[0].email}</small>
+                                                                            <h6 className="mb-0">{l.signataires[0].name}</h6>
+                                                                        </div>
+                                                                        <div
+                                                                            className="user-progress d-flex align-items-center gap-1">
+                                                                            <h6 className="mb-0">{l.created_at}</h6>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>)}
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>}
+                                            </div>
+                                            <div className="mt-3 row">
                                                 <div className="col-lg-6">
                                                     <small className="text-light fw-semibold">Messages</small>
                                                     <div className="card">
@@ -381,10 +432,6 @@ const ViewSending = ( ) => {
                                             </div>
                                         </div>
                                     </div>
-
-
-
-
                                 </div>
                                 {/* End Content*/}
                                 <Footer/>

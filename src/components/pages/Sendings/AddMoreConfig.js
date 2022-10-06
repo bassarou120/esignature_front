@@ -8,6 +8,7 @@ import Sidebar from "../../Sidebar";
 import NavB from "../../Nav";
 import ProfileUlHeader from "../../Sample/ProfileUlHeader";
 import Footer from "../../Footer";
+import Modal from "react-bootstrap/Modal";
 
 
 window.$ = $;
@@ -23,7 +24,9 @@ const AddMoreConfig = (props) => {
     const [display_detail, setDisplayDetail] = useState(false);
     const [widget, setWidget] = useState('');
     const [sending, setSending] = useState([]);
-    const signataires = getStateVal(location).length === 0 ? JSON.parse(localStorage.getItem('signataires')) : getStateVal(location);
+   // const signataires = getStateVal(location).length === 0 ? JSON.parse(localStorage.getItem('signataires')) : getStateVal(location);
+    const signataires = JSON.parse(localStorage.getItem('signataires'));
+    console.log(signataires);
     var i =[];
     if(signataires.length !==0){
         $.each(signataires, function( index, value ) {
@@ -34,15 +37,28 @@ const AddMoreConfig = (props) => {
             })
         });
     }
-    const [signataireAndValidataire, setSignataireAndValidataire] = useState( i)
-    const [cc, setCc] = useState([{ name: "", email : ""}])
+    const [signataireAndValidataire, setSignataireAndValidataire] = useState(i)
+    //const [cc, setCc] = useState([{ name: "", email : ""}])
+    const [cc, setCc] = useState([])
+
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     let handleChange = (i, e) => {
         let newFormValues = [...signataireAndValidataire];
         if(sending.type_signature[0].type==='avanced'){
-            if(e.target.name==='type'){
-               window['showErrorToast']('Vous ne pouvez pas ajouter un signataire pour ce type de signature')
-                newFormValues[i][e.target.name] ='Validataire';
+            if(e.target.name==='type' ){
+                if(e.target.value==='Signataire'){
+                    window['showErrorToast']('Vous ne pouvez pas changer le type de ce signataire')
+                    newFormValues[i][e.target.name] ='Signataire';
+                    return ;
+                }
+                else{
+                    window['showErrorToast']('Le type de ce signataire ne peut etre changer')
+                    newFormValues[i][e.target.name] ='Validataire';
+                    return ;
+                }
             }
             else{
                 newFormValues[i][e.target.name] = e.target.value;
@@ -111,68 +127,6 @@ const AddMoreConfig = (props) => {
             e.stopPropagation();
             return false;
         })
-
-        var formRepeater = $(".form-repeater");
-        var row = 2;
-
-        if (signataires.length !== 0) {
-            row = signataires.length;
-        } else {
-            row = 2;
-        }
-
-        var col = 1;
-
-       /* formRepeater.repeater({
-            show: function () {
-                var fromControl = $(this).find('.form-control, .form-select');
-                var formLabel = $(this).find('.form-label');
-
-                fromControl.each(function (i) {
-                    var id = 'form-repeater-' + row + '-' + col;
-                    $(fromControl[i]).attr('id', id);
-                    $(formLabel[i]).attr('for', id);
-                    col++;
-                });
-
-                row++;
-                $(this).slideDown();
-            },
-            hide: function (e) {
-                window.confirm('Are you sure you want to delete this element?') && $(this).slideUp(e);
-            }
-        });*/
-
-        // Start
-        var formRepeaterCc = $(".form-repeater-cc");
-
-        var row1 = 2;
-        var col1 = 1;
-        formRepeaterCc.on('submit', function (e) {
-            e.preventDefault();
-        });
-
-       /* formRepeaterCc.repeater({
-            show: function () {
-                var fromControl = $(this).find('.form-control, .form-select');
-                var formLabel = $(this).find('.form-label');
-
-                fromControl.each(function (i) {
-                    var id = 'form-repeater-' + row1 + '-' + col1;
-                    $(fromControl[i]).attr('id', id);
-                    $(formLabel[i]).attr('for', id);
-                    col++;
-                });
-
-                row++;
-
-                $(this).slideDown();
-            },
-            hide: function (e) {
-                window.confirm('Are you sure you want to delete this element?') && $(this).slideUp(e);
-            }
-        });*/
-
         getSendingDetail();
 
     }, [])
@@ -280,14 +234,62 @@ const AddMoreConfig = (props) => {
 
     }
 
+    const cancelSending =(e)=>{
+        e.preventDefault();
+            axios
+                .delete(process.env.REACT_APP_API_BASE_URL+'sendings/'+id,{
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                })
+                .then(response => {
+                    handleClose();
+                    localStorage.removeItem('signataires');
+                    localStorage.removeItem('widgets');
+                    history.push('/listingsending/pending');
+                }).catch(function (error) {
+                if (error.response) {
+                    console.log('error');
+                }
+            });
+    }
+
     return (
         <div className='layout-wrapper layout-content-navbar layout-without-menu'>
             <div className="layout-container">
                 <div className="layout-page">
                     <div className="mx-5 mt-2" id="general_error"></div>
+                    <Modal
+                        show={show} onHide={handleClose} animation={false}
+                        size="sm"
+                        aria-labelledby="contained-modal-title-vcenter"
+                        centered
+                    >
+                        <Modal.Header closeButton>
+                            <Modal.Title id="contained-modal-title-vcenter">
+                                Confirmation
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <p className="text-center">Voulez-vous vraiment quitter cette page ?
+                                <small>Vous perdrez vos configuration</small>
+                            </p>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <button type="button" className="btn btn-label-secondary btn-sm"
+                                    onClick={handleClose}>Fermer
+                            </button>
+                            <button type="button" className="btn btn-primary btn-sm" onClick={cancelSending}>Ok</button>
+                        </Modal.Footer>
+                    </Modal>
                     <div className="content-wrapper">
                         {/* Start Content*/}
                         <div className="container-xxl flex-grow-1 container-p-y">
+                            <Link to={"/sending/"+id} href="#" className="btn btn-default" id="back">
+                                <span className="fa fa-arrow-left mr-1"></span>
+                                Retour
+                            </Link>
                             <form id="addMoreConfigForm" onSubmit={endSendingForm}>
                                 <div className=" d-flex justify-content-between mb-3">
                                     <h4 className="fw-bold py-1 ">
@@ -295,6 +297,9 @@ const AddMoreConfig = (props) => {
                                     </h4>
                                     <div className="">
                                         <div className="demo-inline-spacing">
+                                            <button type="button" className="btn btn-danger" id="cancel_btn" onClick={handleShow}>
+                                                Annuler
+                                            </button>
                                             <button type="submit" className="btn btn-primary" id="sbt_btn">
                                                 <span className="spinner-border d-none" role="status" aria-hidden="true" id="spinner_btn" />
                                                 Envoyer
@@ -324,14 +329,14 @@ const AddMoreConfig = (props) => {
                                                             <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
                                                                 <label className="form-label" htmlFor="map-1-2">Nom</label>
                                                                 <input type="text" id="map-1-2" name="name" className="form-control" defaultValue={l.name}
-                                                                       placeholder="Signataire" data-oldvalue={l.name} onChange={e => handleChange(k, e)} />
+                                                                       readOnly={l.type==='Signataire'}   placeholder="Signataire" data-oldvalue={l.name} onChange={e => handleChange(k, e)} />
                                                             </div>
                                                             <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
                                                                 <label className="form-label" htmlFor="map-1-3">Email</label>
-                                                                <input type="email" id="map-1-3" name="email" className="form-control" defaultValue={l.email} onChange={e => handleChange(k, e)}
+                                                                <input type="email" id="map-1-3" name="email" required className="form-control" defaultValue={l.email} onChange={e => handleChange(k, e)}
                                                                        placeholder="signataire@gmail.com" />
                                                                 {
-                                                                    k ?
+                                                                    k && l.type !=='Signataire' ?
                                                                         <button type="button"  className="button remove" onClick={() => removeFormFields(k)}>Supprimer</button>
                                                                         : null
                                                                 }
@@ -396,7 +401,7 @@ const AddMoreConfig = (props) => {
                                                                 </div>
                                                                 <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
                                                                     <label className="form-label" htmlFor="cc-1-2">Email</label>
-                                                                    <input type="email" id="cc-1-2" name="email" className="form-control"
+                                                                    <input type="email" id="cc-1-2" name="email" required className="form-control"
                                                                            placeholder="cc@gmail.com" />
                                                                 </div>
                                                                 <div className="mb-3 col-lg-12 col-xl-2 col-12 d-flex align-items-center mb-0">

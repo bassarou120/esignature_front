@@ -126,7 +126,6 @@ const Sendboard = ( ) => {
                     else{
                         setAsAnswer(true)
                     }
-
                 }
             }).catch(function (error) {
             setDisplayDetail(false);
@@ -268,7 +267,14 @@ const Sendboard = ( ) => {
         }
     }
 
+/*    {
+        headers: {
+            'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+    }*/
     const sendData=(e)=>{
+        console.log(signataire_answer)
        axios
             .put(process.env.REACT_APP_API_BASE_URL+'sendings/doc/signed',{
                 id_sending : params.idsending,
@@ -278,11 +284,6 @@ const Sendboard = ( ) => {
                     userAgent:window.navigator.userAgent,
                     ipAdress:ipInfo
                 }),
-            },{
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                }
             })
             .then(response => {
                 if(response.data.success===true){
