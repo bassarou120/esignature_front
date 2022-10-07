@@ -147,22 +147,23 @@ const ListingSending = () => {
 
            });
 
-
             }, [statut,itemOffset, itemsPerPage,searchVal])
 
     function getDataTableInfo() {
         setLoader(true) ;
         var url = ''
         if($('.type.active').data('id')===0){
+            console.log('here')
              url = process.env.REACT_APP_API_BASE_URL + 'sendings/' + id_user + '/user'
         }
         else{
+            var param={
+                statut:statut
+            }
              url =process.env.REACT_APP_API_BASE_URL + 'sendings/' + id_user + '/user/'+ $('.type.active').data('id')
         }
 
-        var param={
-            statut:statut
-        }
+
 
         if(searchVal !==''){
             param['search_val']=searchVal;
@@ -179,8 +180,8 @@ const ListingSending = () => {
             .then(response => {
                 if (response.data.success === true) {
                     const endOffset = itemOffset + parseInt(itemsPerPage);
-                    console.log(`Loading items from ${itemOffset} to ${endOffset}`);
                         setCurrentItems(response.data.data.slice(itemOffset, endOffset));
+                        console.log(response.data.data)
                         setData(response.data.data);
                         setPageCount(Math.ceil(response.data.data.length / itemsPerPage));
                         setLoader(false) ;
@@ -193,7 +194,8 @@ const ListingSending = () => {
         //console.log(elementToDisplay)
         return (
             <tbody>
-            {elementToDisplay.length!==0 ? elementToDisplay.map((l,k) => <tr key={k}>
+            {elementToDisplay.length!==0 ? elementToDisplay.map((l,k) =>
+                <tr key={k}>
                 <td>{itemOffset + k + 1}</td>
                 <td>{truncate(l.document[0].title,35) }</td>
                 <td>{l.created_at}</td>
@@ -239,7 +241,6 @@ const ListingSending = () => {
 
     function openChoiceModal() {
         store.dispatch(changeModal({model: 0}));
-        console.log(store.getState())
     }
 
     window.store = store;

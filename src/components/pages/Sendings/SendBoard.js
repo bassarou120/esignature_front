@@ -192,18 +192,18 @@ const Sendboard = ( ) => {
             switch (cas) {
                 case 'text_field':
                     form.push(<div key={i} className="mb-3">
-                        <label htmlFor={s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                        <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
                             {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
                         </label>
-                        <input type="text" className="form-control" id={s.widget_id} required={s.required === true } placeholder="Text" />
+                        <input type="text" className="form-control" id={'input_'+s.widget_id} required={s.required === true } placeholder="Text" />
                     </div>)
                     break;
                 case 'number_field':
                     form.push(<div  key={i} className="mb-3">
-                        <label htmlFor={s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                        <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
                             {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
                         </label>
-                        <input type="number" className="form-control" id={s.widget_id} required={s.required === true } placeholder="Text"/>
+                        <input type="number" className="form-control" id={'input_'+s.widget_id} required={s.required === true } placeholder="Text"/>
                     </div>)
                     break;
                 case 'select_field':
@@ -221,19 +221,19 @@ const Sendboard = ( ) => {
                     break;
                 case 'signature_field':
                     form.push( <div className="mb-3" key={i}>
-                        <label htmlFor={s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                        <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
                             {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
                         </label>
-                        <SignatureCanva signatureUrl={signature_url} setSignatureUrl={setSignature_url} id={s.widget_id} key={i} />
+                        <SignatureCanva signatureUrl={signature_url} setSignatureUrl={setSignature_url} backgroundColor="#ffffff00" id={'input_'+s.widget_id} key={i} />
                         <span id="signature_error" className="text-danger text-center"></span>
                     </div>)
                     break;
                 case 'image_field':
                     form.push( <div key={i} className="mb-3">
-                           <label htmlFor={s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                           <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
                                {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
                            </label>
-                           <input className="form-control" type="file" id={s.widget_id} required={s.required === true }/>
+                           <input className="form-control" type="file" id={'input_'+s.widget_id} required={s.required === true }/>
                          </div>)
                     break;
                 default:
@@ -248,10 +248,14 @@ const Sendboard = ( ) => {
         var answer =[];
         $("#form_answer input").each(function( index ) {
             if($(this).attr('id')!=='confirm'){
+                var identifiant  =  $(this).attr('id');
+                var id = identifiant.split('input_')[1];
                 answer.push({
-                    id:$(this).attr('id'),
+                    id: id,
                     value:$(this).val(),
                 })
+                $('#label_'+id).html('<p style="font-size:'+sendingData.police+'px" class="text-black">'+$(this).val()+'</p>')
+
             }
         });
 
@@ -262,8 +266,14 @@ const Sendboard = ( ) => {
             answer.push({
                 signature:signature_url
             })
+            $(".drop-item").each(function( index ) {
+                if($(this).data('widget-type') === 'signature'){
+                    $(this).html('<img style="width:120% !important;" src="'+signature_url+'">')
+                }
+            });
             setSignataire_answer(JSON.stringify(answer));
-            sendData();
+
+            handleClose();
         }
     }
 
@@ -293,7 +303,8 @@ const Sendboard = ( ) => {
                     }
                     localStorage.setItem('already_signed',JSON.stringify(arr))
                     window['showSuccessToast']('Réponse envoyée avec succès')
-                    handleClose();
+                    window.location.reload();
+
                 }
             }).catch(function (error) {
             if (error.response) {
@@ -323,17 +334,16 @@ const Sendboard = ( ) => {
                                                 <div>
                                                     <p className="card-title mb-sm-0">{title}</p>
                                                 </div>
-
                                                 {asAnswer &&
                                                 <div className="">
                                                     <div className="demo-inline-spacing">
                                                         <button type="submit" className="btn btn-primary" id="open_form" onClick={handleShow}>
                                                             Remplir comme un formulaire
                                                         </button>
-                                                        {/*<button type="submit" className=" btn btn-primary" id="sbt_btn" onClick={sendData}>*/}
-                                                        {/*    <span className="spinner-border d-none" role="status" aria-hidden="true" id="spinner_btn" />*/}
-                                                        {/*    Envoyer*/}
-                                                        {/*</button>*/}
+                                                        <button type="submit" className=" btn btn-success" id="sbt_btn" onClick={sendData}>
+                                                            <span className="spinner-border d-none" role="status" aria-hidden="true" id="spinner_btn" />
+                                                            Envoyer
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 }
@@ -391,11 +401,11 @@ const Sendboard = ( ) => {
                                                                                          id={s?.widget_id} data-widget-type={s?.type_widget}
                                                                                          data-signataire={s?.signataire} data-page={s?.page}
                                                                                          data-isrequired={s.required}
-                                                                                         style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`,cursor:'pointer'}}
+                                                                                         style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`,cursor:'pointer',backgroundColor:'white'}}
 
                                                                                     >
-                                                                                        <label>
-                                                                                            <p style={{fontSize:"10px"}} className="text-white">{displayWidgetLabel(s.type_widget)}</p>
+                                                                                        <label id={'label_'+s?.widget_id}>
+                                                                                            <p style={{fontSize:"10px"}} className="text-black">{displayWidgetLabel(s.type_widget)}</p>
                                                                                         </label>
 
                                                                                     </div>

@@ -21,7 +21,7 @@ class SignatureCanva extends Component {
         let {trimmedDataURL} = this.state
         return <div className={styles.container}>
             <div className={styles.sigContainer}>
-                <SignaturePad canvasProps={{className: styles.sigPad}} penColor="#333333"
+                <SignaturePad canvasProps={{className: styles.sigPad}} penColor="#333333" backgroundColor="#ffffff00"
                               ref={(ref) => { this.sigPad = ref }} />
             </div>
             <div className="text-center">

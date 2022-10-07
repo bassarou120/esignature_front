@@ -28,6 +28,7 @@ const Sending = (props) => {
     // const [widget, setWidget] = useState([]);
     const [widget_id,setWidget_id]=useState('');
     const [is_required,setIs_required]=useState(false);
+    const [police,setPolice]=useState(12);
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const from = urlParams.get('from')
@@ -646,7 +647,6 @@ const Sending = (props) => {
 
     const submitOptionForm = (e)=>{
         e.preventDefault();
-        console.log(widget_id,is_required)
         $('#'+widget_id).attr('data-isrequired');
         updateNewVersion();
         handleCloseOption()
@@ -766,6 +766,7 @@ const Sending = (props) => {
             .put(process.env.REACT_APP_API_BASE_URL+'sendings/add/signataires/'+id,{
                 signataires : $('#TagifyEmailList').val(),
                 sign_widget:JSON.stringify(result),
+                police:police,
                 id:id
             },{
                 headers: {
@@ -924,6 +925,12 @@ const Sending = (props) => {
                             <button type="button" id="addNewTag" className="btn btn-outline-primary btn-icon rounded-pill" >
                                 <span className="tf-icons bx bx-plus"/></button>
                             {model_name_field()}
+                            {/*<h5>Définissez une police</h5>*/}
+                            <div className="mb-3 col-md-3">
+                                <label htmlFor="police" className="form-label">Définissez une police
+                                </label>
+                                <input type="number" className="form-control" id="police" required value={police} max="30" />
+                            </div>
                         </div>
 
                     </div>
