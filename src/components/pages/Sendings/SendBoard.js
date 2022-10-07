@@ -254,7 +254,7 @@ const Sendboard = ( ) => {
                     id: id,
                     value:$(this).val(),
                 })
-                $('#label_'+id).html('<p style="font-size:'+sendingData.police+'px" class="text-black">'+$(this).val()+'</p>')
+                $('#label_'+id).html('<p style="font-size:'+sendingData.police+'" class="text-black">'+$(this).val()+'</p>')
 
             }
         });

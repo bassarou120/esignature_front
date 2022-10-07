@@ -26,18 +26,8 @@ const AddMoreConfig = (props) => {
     const [sending, setSending] = useState([]);
    // const signataires = getStateVal(location).length === 0 ? JSON.parse(localStorage.getItem('signataires')) : getStateVal(location);
     const signataires = JSON.parse(localStorage.getItem('signataires'));
-    console.log(signataires);
-    var i =[];
-    if(signataires.length !==0){
-        $.each(signataires, function( index, value ) {
-            i.push({
-                name:value.value,
-                email:'',
-                type:'Signataire',
-            })
-        });
-    }
-    const [signataireAndValidataire, setSignataireAndValidataire] = useState(i)
+   // console.log(signataires);
+    const [signataireAndValidataire, setSignataireAndValidataire] = useState([])
     //const [cc, setCc] = useState([{ name: "", email : ""}])
     const [cc, setCc] = useState([])
 
@@ -118,15 +108,28 @@ const AddMoreConfig = (props) => {
     const history = useHistory();
 
     useEffect(() => {
-        $('body').on('click', '.new_row', function (e) {
-            e.stopPropagation();
-            return false;
-        })
+        if(signataires.length !==0){
+            var i =[];
+            $.each(signataires, function( index, value ) {
+                i.push({
+                    name:value.value,
+                    email:'',
+                    type:'Signataire',
+                })
+            });
+        }
 
-        $('body').on('click', '.delete_row', function (e) {
-            e.stopPropagation();
-            return false;
-        })
+        setSignataireAndValidataire(i);
+        // $('body').on('click', '.new_row', function (e) {
+        //     e.stopPropagation();
+        //     return false;
+        // })
+        //
+        // $('body').on('click', '.delete_row', function (e) {
+        //     e.stopPropagation();
+        //     return false;
+        // })
+
         getSendingDetail();
 
     }, [])

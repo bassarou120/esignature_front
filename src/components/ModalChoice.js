@@ -103,11 +103,12 @@ const ModalChoice = () => {
                         $('#modal_error_ul').append('<li class="list-group-item">' + value + '</li>');
                     });
                 }
+                $('#spinner_btn').addClass('d-none')
+                $('#sbt_btn').prop("disabled", false);
             }
         }).finally(function(){
             setTimeout(function(){
-                $('#spinner_btn').addClass('d-none')
-                $('#sbt_btn').prop("disabled", false);
+
             } ,200);
 
         });
@@ -228,11 +229,11 @@ const ModalChoice = () => {
 
                                 <div className="col-12 text-center">
                                     <button type="reset" className="btn btn-label-secondary" data-bs-dismiss="modal"
-                                            aria-label="Close">{strings.cancel}
+                                            aria-label="Close">Annuler
                                     </button>
                                     <button type="submit"  className={"btn btn-primary me-sm-3 me-1 " + (is_disabled ? ' disabled' : '')} id="sbt_btn">
                                         <span className="spinner-border d-none" role="status" aria-hidden="true" id="spinner_btn"/>
-                                        {strings.continuous}
+                                        Continuer
                                     </button>
                                 </div>
                             </form>

@@ -92,7 +92,7 @@ const Sending = (props) => {
                 if(s !== null && s.length !== 0 ){
                     $.each(s, function( index, value ) {
                         if(value === e.detail.data.value){
-                            console.log('here')
+                           // console.log('here')
                             s = s.slice(0, index)
                         }
                     });
@@ -178,7 +178,7 @@ const Sending = (props) => {
                 y= Math.abs(y)
                // var this_number = newwidget + 1;
                 var this_number = implement_widget_count + 1;
-                console.log(implement_widget_count)
+               // console.log(implement_widget_count)
                 var drop_item_id= ui.draggable.attr('data-name')+'_'+this_number;
 
                 if(ui.draggable.hasClass('draggable_field')){
@@ -725,7 +725,7 @@ const Sending = (props) => {
             theNewWidget =  JSON.stringify(i);
 
         }
-        console.log('update',localStorage.getItem('widgets'))
+       // console.log('update',localStorage.getItem('widgets'))
         updateWidgetRequest(id,theNewWidget);
     };
 
@@ -742,7 +742,7 @@ const Sending = (props) => {
             })
             .then(response => {
                 if(response.data.success===true){
-                    console.log('Enregistrement réussi')
+                   // console.log('Enregistrement réussi')
                 }
                 else{
                     console.log('Error de l\'enregistrement')
@@ -776,7 +776,7 @@ const Sending = (props) => {
             })
             .then(response => {
                 if(response.data.success===true){
-                    console.log('Enregistrement réussi')
+                   // console.log('Enregistrement réussi')
                 }
             }).catch(function (error) {
             if (error.response) {
