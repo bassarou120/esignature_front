@@ -132,7 +132,7 @@ const AddMoreConfig = (props) => {
 
         getSendingDetail();
 
-    }, [])
+    }, [sending])
 
     const { id } = useParams();
 
