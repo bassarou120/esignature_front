@@ -61,7 +61,8 @@ const AddMoreConfig = (props) => {
     }
 
     let addFormFields = () => {
-        console.log(sending.type_signature[0].type);
+        console.log('here');
+      //  console.log(sending.type_signature[0].type);
         if(sending.type_signature[0].type==='avanced'){
             console.log('1');
             setSignataireAndValidataire([...signataireAndValidataire, { name: "", email: "",type:"Validataire" }])
@@ -355,7 +356,7 @@ const AddMoreConfig = (props) => {
                                                 </div>
                                             )}
                                                 <div className="mb-0">
-                                                    <button className="btn btn-primary new_row" type="button" onClick={() => alert('click')} >
+                                                    <button className="btn btn-primary new_row" type="button" onClick={() => addFormFields()} >
                                                         <i className="bx bx-plus"></i>
                                                         <span className="align-middle">Ajouter</span>
                                                     </button>
