@@ -61,7 +61,7 @@ const AddMoreConfig = (props) => {
     }
 
     let addFormFields = () => {
-        console.log('here');
+        console.log(sending);
       //  console.log(sending.type_signature[0].type);
         if(sending.type_signature[0].type==='avanced'){
             console.log('1');
