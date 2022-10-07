@@ -355,7 +355,7 @@ const AddMoreConfig = (props) => {
                                                 </div>
                                             )}
                                                 <div className="mb-0">
-                                                    <button className="btn btn-primary new_row" type="button" onClick={() => addFormFields()} >
+                                                    <button className="btn btn-primary new_row" type="button" onClick={() => alert('click')} >
                                                         <i className="bx bx-plus"></i>
                                                         <span className="align-middle">Ajouter</span>
                                                     </button>
@@ -372,7 +372,6 @@ const AddMoreConfig = (props) => {
                                         </h5>
                                     </div>
                                     <div className="card-body">
-
                                         <div className="row">
                                             <div className="mb-3 col-lg-12 col-xl-6 col-12 mb-0">
                                                 <label className="form-label" htmlFor="form-repeater-1-1">Objet</label>
