@@ -61,8 +61,11 @@ const AddMoreConfig = (props) => {
     }
 
     let addFormFields = () => {
+
         if(sending.type_signature[0].type==='avanced'){
+            console.log('1');
             setSignataireAndValidataire([...signataireAndValidataire, { name: "", email: "",type:"Validataire" }])
+            console.log('2');
         }
         else{
             setSignataireAndValidataire([...signataireAndValidataire, { name: "", email: "",type:"" }])
