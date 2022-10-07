@@ -355,7 +355,7 @@ const AddMoreConfig = (props) => {
                                                 </div>
                                             )}
                                                 <div className="mb-0">
-                                                    <button className="btn btn-primary new_row" onClick={() => addFormFields()} >
+                                                    <button className="btn btn-primary new_row" type="button" onClick={() => addFormFields()} >
                                                         <i className="bx bx-plus"></i>
                                                         <span className="align-middle">Ajouter</span>
                                                     </button>
@@ -424,7 +424,7 @@ const AddMoreConfig = (props) => {
                                                 </div>
                                             </div>
                                             <div className="mb-0">
-                                                <button className="btn btn-primary new_row" onClick={() => addFormFieldsCc()}>
+                                                <button className="btn btn-primary new_row" type="button" onClick={() => addFormFieldsCc()}>
                                                     <i className="bx bx-plus"></i>
                                                     <span className="align-middle">Ajouter</span>
                                                 </button>
