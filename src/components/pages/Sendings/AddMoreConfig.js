@@ -176,7 +176,8 @@ const AddMoreConfig = (props) => {
         data.append('rappel', rappel)
 
         axios
-            .put(process.env.REACT_APP_API_BASE_URL+'sendings/' + id, Object.fromEntries(data),{
+           // .put(process.env.REACT_APP_API_BASE_URL+'sendings/' + id, Object.fromEntries(data),{
+            .post(process.env.REACT_APP_API_BASE_URL+'sendings/finalise/configuration/' + id, Object.fromEntries(data),{
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem('token'),
