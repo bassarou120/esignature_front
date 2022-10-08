@@ -180,7 +180,8 @@ const AddMoreConfig = (props) => {
             .put(process.env.REACT_APP_API_BASE_URL+'sendings/' + id, Object.fromEntries(data),{
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                    'Access-Control-Allow-Origin': '*',
                 }
             })
             .then(response => {
@@ -193,6 +194,7 @@ const AddMoreConfig = (props) => {
                     // window.location = "/detail/sending/"+id;
                     localStorage.removeItem('widgets');
                     localStorage.removeItem('signataires');
+                    localStorage.removeItem('type_signature');
                     history.push('/detail/sending/' + id);
 
                 } else {
@@ -249,6 +251,7 @@ const AddMoreConfig = (props) => {
                     handleClose();
                     localStorage.removeItem('signataires');
                     localStorage.removeItem('widgets');
+                    localStorage.removeItem('type_signature');
                     history.push('/listingsending/pending');
                 }).catch(function (error) {
                 if (error.response) {
