@@ -61,7 +61,7 @@ const AddMoreConfig = (props) => {
     }
 
     let addFormFields = () => {
-        if(sending.type_signature[0].type==='avanced'){
+        if(localStorage.getItem('type_signature') ==='avanced'){
             setSignataireAndValidataire([...signataireAndValidataire, { name: "", email: "",type:"Validataire" }])
         }
         else{
@@ -165,7 +165,6 @@ const AddMoreConfig = (props) => {
 
     const endSendingForm = (e) => {
         e.preventDefault();
-
         window['startspinner']();
 
         var data = new FormData(this)

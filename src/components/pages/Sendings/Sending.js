@@ -538,6 +538,7 @@ const Sending = (props) => {
         }
         else{
             localStorage.setItem('signataires',$('#TagifyEmailList').val())
+            localStorage.setItem('signature_type',sendingData.type_signature[0].type)
             history.push('/more/configuration/'+id,state);
         }
 
