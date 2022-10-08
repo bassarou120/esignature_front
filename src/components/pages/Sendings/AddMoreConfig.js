@@ -37,7 +37,7 @@ const AddMoreConfig = (props) => {
 
     let handleChange = (i, e) => {
         let newFormValues = [...signataireAndValidataire];
-        if(sending.type_signature[0].type==='avanced'){
+        if(localStorage.getItem('type_signature')==='avanced'){
             if(e.target.name==='type' ){
                 if(e.target.value==='Signataire'){
                     window['showErrorToast']('Vous ne pouvez pas changer le type de ce signataire')
@@ -67,7 +67,6 @@ const AddMoreConfig = (props) => {
         else{
             setSignataireAndValidataire([...signataireAndValidataire, { name: "", email: "",type:"" }])
         }
-
     }
 
     let removeFormFields = (i) => {
