@@ -192,6 +192,16 @@ const Sending = (props) => {
                     }else{
                         var required =false
                     }
+                    if (sendingData["type_signature"]?.[0]?.type==='simple'){
+                        if (ui.draggable.attr('data-name')==='certificat'){
+                            var  required=true
+                        }
+                        else{
+                            var required =false
+                        }
+                    }else{
+                        var required =false
+                    }
                     var $el = $('<div class="drop-item form-group" id="'+drop_item_id+'" data-widget-type="'+ui.draggable.attr('data-name')+'" data-signataire="'+$('.the_selected_tag').first().attr('title')+'" data-page="'+page+'" data-isrequired="'+required+'" style="top:'+y+'px;left: '+x+'px " ><label><p  style="font-size: 10px" class="text-white" >' + ui.draggable.text() + '</p></label></div>');
                     $el.append($('<button type="button" class="remove"><span class="fa fa-close"></span></button>').click(function () { $(this).parent().detach();updateNewVersion(); disabled_submit_btn(); this_number--; }));
                     $(this).find( ".widget_space" ).append($el);
@@ -607,6 +617,50 @@ const Sending = (props) => {
 
                 var w = $(this).find(".drop-item").filter(function( index ) {
                     return $(this).attr('data-widget-type') === 'signature';
+                })
+                    .each(function( index ) {
+                        var s = $(this).attr('data-signataire')
+                        $.each( signataires, function( key, value ) {
+                            if(s===value.value){
+                                if (!count_signature_widget.includes(value.value)) {
+                                    count_signature_widget.push(value.value);
+                                }
+                            }
+                        });
+                    });
+            });
+
+            if(count_signature_widget.length !== signataires.length){
+                $('#error').removeClass('d-none')
+                $('#more_config_btn').attr('disabled',true)
+            }
+            else{
+                $('#error').addClass('d-none')
+                $('#more_config_btn').attr('disabled',false)
+            }
+
+        }
+
+        if(sendingData["type_signature"]?.[0]?.type==='simple'){
+            var signataires = [] ;
+
+            if(typeof($('#TagifyEmailList').val()) !== 'undefined'){
+                try {
+                    signataires=  JSON.parse($('#TagifyEmailList').val());
+                } catch (e) {
+                    var json = '[{"value":"'+$('#TagifyEmailList').val()+'"}]';
+                    signataires= JSON.parse(json);
+                }
+            }
+            else{
+                signataires= [];
+            }
+            var count_signature_widget =[];
+            $( ".widget_space" ).each(function( index ) {
+                //  var w = $(this).find(".drop-item [data-widget-type='signature']");
+
+                var w = $(this).find(".drop-item").filter(function( index ) {
+                    return $(this).attr('data-widget-type') === 'certificat';
                 })
                     .each(function( index ) {
                         var s = $(this).attr('data-signataire')

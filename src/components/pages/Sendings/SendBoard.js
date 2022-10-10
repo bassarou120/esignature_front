@@ -159,6 +159,9 @@ const Sendboard = ( ) => {
             case 'image':
                 label = 'Image';
                 break;
+            case 'certificat':
+                label = 'Entrez votre certificat';
+                break;
             default:
             // code block
         }
@@ -171,6 +174,7 @@ const Sendboard = ( ) => {
         var select_field = [];
         var signature_field = ['signature'];
         var image_field = ['image'];
+        var certificat_field = ['certificat'];
         var form = [];
         {widget.map((s, i) => {
             var cas = '';
@@ -188,6 +192,9 @@ const Sendboard = ( ) => {
             }
             if(image_field.includes(s.type_widget)){
                 cas = 'image_field';
+            }
+            if(certificat_field.includes(s.type_widget)){
+                cas = 'certificat_field';
             }
             switch (cas) {
                 case 'text_field':
@@ -236,6 +243,15 @@ const Sendboard = ( ) => {
                            <input className="form-control" type="file" accept="image/*" id={'input_'+s.widget_id} required={s.required === true }/>
                          </div>)
                     break;
+
+                case 'certificat_field':
+                    form.push( <div key={i} className="mb-3">
+                        <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                            {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                        </label>
+                        <input className="form-control" type="file" accept="image/*" id={'input_'+s.widget_id} required={s.required === true }/>
+                    </div>)
+                    break;
                 default:
                     return null;
             }
@@ -243,14 +259,7 @@ const Sendboard = ( ) => {
         return form;
     }
 
-    function encodeImageFileAsURL(element) {
-        var file = element.files[0];
-        var reader = new FileReader();
-        reader.onloadend = function() {
-           return reader.result ;
-        }
-        reader.readAsDataURL(file);
-    }
+
     const fillForm =(e)=>{
         e.preventDefault();
         var answer =[];
@@ -258,48 +267,63 @@ const Sendboard = ( ) => {
             if($(this).attr('id')!=='confirm'){
                 var identifiant  =  $(this).attr('id');
                 var id = identifiant.split('input_')[1];
-               if($(this).type==="file"){
-                   var  value = encodeImageFileAsURL($(this)) ;
+                var  val='';
+               if($(this).attr('type')==='file'){
+                   var file = document.getElementById($(this).attr('id')).files[0];
+                    var el = $( "#label_" + id);
+                   var reader = new FileReader();
+                   reader.onloadend = function() {
+                       val =  reader.result ;
+                       answer.push({
+                           id: id,
+                           value: reader.result,
+                       })
+                       //console.log(answer)
+                       localStorage.setItem('answer',JSON.stringify(answer))
+                       el.html('<img style="width:100% !important;" src="'+reader.result+'">')
+                   }
+                   reader.readAsDataURL(file);
                }
                else{
-                   var  value = $(this).val();
+                     val = $(this).val();
+                     answer.push({
+                           id: id,
+                           value:val,
+                     })
+                   localStorage.setItem('answer',JSON.stringify(answer))
                }
-
-                answer.push({
-                    id: id,
-                    value:value,
-                })
-                $('#label_'+id).html('<p style="font-size:'+sendingData.police+'" class="text-black">'+$(this).val()+'</p>')
-
             }
         });
-
-        if(sendingData.type_signature[0].type =="avanced" && signature_url==''){
-            $('#signature_error').html('La signature est obligatoire')
+        //console.log(answer)
+        if(sendingData.type_signature[0].type ==="avanced"){
+            if(signature_url===''){
+                $('#signature_error').html('La signature est obligatoire')
+            }
+            else{
+                answer.push({
+                    signature:signature_url
+                })
+                $(".drop-item").each(function( index ) {
+                    if($(this).data('widget-type') === 'signature'){
+                        $(this).html('<img style="width:120% !important;" src="'+signature_url+'">')
+                    }
+                });
+                setSignataire_answer(JSON.stringify(answer));
+            }
         }
-        else{
-            answer.push({
-                signature:signature_url
-            })
-            $(".drop-item").each(function( index ) {
-                if($(this).data('widget-type') === 'signature'){
-                    $(this).html('<img style="width:120% !important;" src="'+signature_url+'">')
-                }
-            });
-            setSignataire_answer(JSON.stringify(answer));
 
-            handleClose();
-        }
+        handleClose();
+        changeReadAndOk();
     }
 
 
     const sendData=(e)=>{
-        console.log(signataire_answer)
+
        axios
             .put(process.env.REACT_APP_API_BASE_URL+'sendings/doc/signed',{
                 id_sending : params.idsending,
                 id_signataire:params.signataire,
-                answer:signataire_answer,
+                answer:localStorage.getItem('answer'),
                 mobile_info: JSON.stringify({
                     userAgent:window.navigator.userAgent,
                     ipAdress:ipInfo
@@ -313,7 +337,9 @@ const Sendboard = ( ) => {
                     }
                     localStorage.setItem('already_signed',JSON.stringify(arr))
                     window['showSuccessToast']('Réponse envoyée avec succès')
-                    window.location.reload();
+                    setTimeout(() => {
+                        window.close();
+                    }, 1000)
 
                 }
             }).catch(function (error) {
@@ -415,7 +441,7 @@ const Sendboard = ( ) => {
 
                                                                                     >
                                                                                         <label id={'label_'+s?.widget_id}>
-                                                                                            <p style={{fontSize:"10px"}} className="text-black">{displayWidgetLabel(s.type_widget)}</p>
+                                                                                            <p style={{fontSize:"10px"}} className="text-black">{s.type_widget==='certificat' ? 'Certificat' :displayWidgetLabel(s.type_widget)} </p>
                                                                                         </label>
 
                                                                                     </div>
