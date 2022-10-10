@@ -930,7 +930,7 @@ const Sending = (props) => {
                             <div className="mb-3 col-md-3">
                                 <label htmlFor="police" className="form-label">Définissez une police
                                 </label>
-                                <input type="number" className="form-control" id="police" required value={police} max="30" />
+                                <input type="number" className="form-control" id="police" required value={police} onChange={e=>{setPolice(e.target.value)}} max="30" />
                             </div>
                         </div>
 
@@ -1003,6 +1003,9 @@ const Sending = (props) => {
                                         {sendingParameter
                                             .filter(l => {
                                                 if(sendingData["type_signature"]?.[0]?.type!=='avanced' && l.name==='signature'){
+                                                    return false;
+                                                }
+                                                if(sendingData["type_signature"]?.[0]?.type!=='simple' && l.name==='certificat'){
                                                     return false;
                                                 }
                                                 return true;

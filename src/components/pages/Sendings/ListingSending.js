@@ -191,7 +191,6 @@ const ListingSending = () => {
     }
 
     function Items({elementToDisplay}) {
-        //console.log(elementToDisplay)
         return (
             <tbody>
             {elementToDisplay.length!==0 ? elementToDisplay.map((l,k) =>
@@ -235,7 +234,6 @@ const ListingSending = () => {
 
     const handlePageClick = (event) => {
         const newOffset = event.selected * itemsPerPage % data.length;
-        // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
         setItemOffset(newOffset);
     };
 
@@ -294,7 +292,7 @@ const ListingSending = () => {
                                     style={{marginTop: '1px !important'}}>
                                     <li className="nav-item">
                                         <a className="nav-link type active" href="!#" data-id="0">
-                                            <i className=" bx bx-certification me-1"/> Tous
+                                            <i className=" bx bx-list-ul"/> Tous
                                         </a>
                                     </li>
                                     <li className="nav-item">
@@ -352,7 +350,7 @@ const ListingSending = () => {
                                 </div>
 
                                 <div className="card-body">
-                                    <div className="text-nowrap m-1">
+                                    <div className="text-nowrap m-1 table-responsive">
                                         <DataLoadingSpinner loader={loader}/>
                                         <table className="table table-borderless" id="sending_table"
                                                style={{"width": "100%"}}>

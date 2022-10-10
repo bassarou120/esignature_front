@@ -233,7 +233,7 @@ const Sendboard = ( ) => {
                            <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
                                {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
                            </label>
-                           <input className="form-control" type="file" id={'input_'+s.widget_id} required={s.required === true }/>
+                           <input className="form-control" type="file" accept="image/*" id={'input_'+s.widget_id} required={s.required === true }/>
                          </div>)
                     break;
                 default:
@@ -243,6 +243,14 @@ const Sendboard = ( ) => {
         return form;
     }
 
+    function encodeImageFileAsURL(element) {
+        var file = element.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function() {
+           return reader.result ;
+        }
+        reader.readAsDataURL(file);
+    }
     const fillForm =(e)=>{
         e.preventDefault();
         var answer =[];
@@ -250,9 +258,16 @@ const Sendboard = ( ) => {
             if($(this).attr('id')!=='confirm'){
                 var identifiant  =  $(this).attr('id');
                 var id = identifiant.split('input_')[1];
+               if($(this).type==="file"){
+                   var  value = encodeImageFileAsURL($(this)) ;
+               }
+               else{
+                   var  value = $(this).val();
+               }
+
                 answer.push({
                     id: id,
-                    value:$(this).val(),
+                    value:value,
                 })
                 $('#label_'+id).html('<p style="font-size:'+sendingData.police+'" class="text-black">'+$(this).val()+'</p>')
 
@@ -277,12 +292,7 @@ const Sendboard = ( ) => {
         }
     }
 
-/*    {
-        headers: {
-            'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-    }*/
+
     const sendData=(e)=>{
         console.log(signataire_answer)
        axios
