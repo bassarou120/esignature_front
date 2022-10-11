@@ -268,9 +268,10 @@ const Sendboard = ( ) => {
                 var identifiant  =  $(this).attr('id');
                 var id = identifiant.split('input_')[1];
                 var  val='';
+                var el = $( "#label_" + id);
                if($(this).attr('type')==='file'){
                    var file = document.getElementById($(this).attr('id')).files[0];
-                    var el = $( "#label_" + id);
+
                    var reader = new FileReader();
                    reader.onloadend = function() {
                        val =  reader.result ;
@@ -290,6 +291,7 @@ const Sendboard = ( ) => {
                            id: id,
                            value:val,
                      })
+                   el.html(val)
                    localStorage.setItem('answer',JSON.stringify(answer))
                }
             }
@@ -301,7 +303,8 @@ const Sendboard = ( ) => {
             }
             else{
                 answer.push({
-                    signature:signature_url
+                    id: 'signature',
+                    value:signature_url
                 })
                 $(".drop-item").each(function( index ) {
                     if($(this).data('widget-type') === 'signature'){
@@ -432,12 +435,12 @@ const Sendboard = ( ) => {
                                                                         .map((s, i) => {
                                                                             if(l.page==s.page){
                                                                                 return (
-                                                                                    <div key ={i}
+                                                                                    <div key ={i} onClick={()=>{handleShow()}}
                                                                                          className="drop-item form-group"
                                                                                          id={s?.widget_id} data-widget-type={s?.type_widget}
                                                                                          data-signataire={s?.signataire} data-page={s?.page}
                                                                                          data-isrequired={s.required}
-                                                                                         style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`,cursor:'pointer',backgroundColor:'white'}}
+                                                                                         style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`,cursor:'pointer',backgroundColor:'#F5F5F9'}}
 
                                                                                     >
                                                                                         <label id={'label_'+s?.widget_id}>
