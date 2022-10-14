@@ -78,25 +78,30 @@ const Sendboard = ( ) => {
             .then(response => {
                 if(response.data.success === true){
                     if(response.data.data.is_config===1 || response.data.data.is_config){
-                        setDisplayDetail(true);
-                        setSendingData(response.data.data)
-                        setTitle(response.data.data["document"][0].title)
-                        var f =response.data.data['document']?.[0]?.preview;
-                        const myArray = f.split("/");
-                        const folder =myArray[0];
-                        const n =response.data.data["document"]?.[0]?.nbre_page;
-                        var inter = [];
-                        for (var i = 1; i <= n; i++) {
-                            inter.push({page:i,src:process.env.REACT_APP_BACKEND_ASSET_BASE_URL+"previews/"+folder+'/'+i+'.jpeg'} );
+                        if(response.data.data.statut[0].name=='EXPIRER'){
+                            setCanDisplay(false)
                         }
-                        if (response.data.data["configuration"] == null){
-                            localStorage.setItem('widgets', JSON.stringify([]));
+                        else {
+                            setDisplayDetail(true);
+                            setSendingData(response.data.data)
+                            setTitle(response.data.data["document"][0].title)
+                            var f =response.data.data['document']?.[0]?.preview;
+                            const myArray = f.split("/");
+                            const folder =myArray[0];
+                            const n =response.data.data["document"]?.[0]?.nbre_page;
+                            var inter = [];
+                            for (var i = 1; i <= n; i++) {
+                                inter.push({page:i,src:process.env.REACT_APP_BACKEND_ASSET_BASE_URL+"previews/"+folder+'/'+i+'.jpeg'} );
+                            }
+                            if (response.data.data["configuration"] == null){
+                                localStorage.setItem('widgets', JSON.stringify([]));
+                            }
+                            else{
+                                localStorage.setItem('widgets', response.data.data["configuration"]);
+                                setConfig(JSON.parse(response.data.data["configuration"]));
+                            }
+                            setImglist(inter);
                         }
-                        else{
-                            localStorage.setItem('widgets', response.data.data["configuration"]);
-                            setConfig(JSON.parse(response.data.data["configuration"]));
-                        }
-                        setImglist(inter);
                     }
                     else{
                         setDisplayDetail(false);
@@ -259,7 +264,6 @@ const Sendboard = ( ) => {
         return form;
     }
 
-
     const fillForm =(e)=>{
         e.preventDefault();
         var answer =[];
@@ -318,7 +322,6 @@ const Sendboard = ( ) => {
         handleClose();
         changeReadAndOk();
     }
-
 
     const sendData=(e)=>{
 

@@ -20,6 +20,8 @@ const ViewSending = ( ) => {
     const [cc, setCc] = useState([ ]);
     const [folder, setFolder] = useState('');
     const [display_detail, setDisplayDetail] = useState(false);
+    const [docIsSigned, setDocIsSigned] = useState(false);
+    const [haveProofFile, setHaveProofFile] = useState(false);
     var indents = [];
     const [loader, setLoader] = useState(true);
 
@@ -53,12 +55,13 @@ const ViewSending = ( ) => {
                         var f =response.data.data['document']?.[0]?.preview;
                         const myArray = f.split("/");
                         setFolder(myArray[0]);
-                        // var n =response.data.data["document"]?.[0]?.nbre_page;
-                        //
-                        // for (var i = 1; i <= n; i++) {
-                        //     indents.push(<div key={i} className="list-group-item"><img className="d-flex justify-content-between w-100" src={"/previews/"+folder+'/'+i+'.jpeg'} width="115"/></div>);
-                        // }
                         setLoader(false);
+                        if(response.data.data.statut[0].name ==='SIGNER'){
+                            setDocIsSigned(true)
+                        }
+                        if(response.data.data.type_signature[0].type ==='simple'){
+                            setHaveProofFile(true)
+                        }
                     }
                     else{
                         setDisplayDetail(false);
@@ -141,8 +144,8 @@ const ViewSending = ( ) => {
     }
 
     function displayCollapse(){
+        var signataireCollapse =[];
         if(loader===false && Object.keys(sendingStatutBySignataire).length !==0) {
-            var signataireCollapse =[];
             for (var i = 0; i < Object.keys(sendingStatutBySignataire).length; i++) {
                 var list_statut=[];
                 var date=[];
@@ -238,6 +241,74 @@ const ViewSending = ( ) => {
             }
             return signataireCollapse;
         }
+        else{
+            signataireCollapse.push(
+                <div key="0" className="card accordion-item active">
+                    <h2 className="accordion-header" id="headingOne">
+                        <button type="button" className="accordion-button" data-bs-toggle="collapse"
+                                data-bs-target="#accordion0" aria-expanded="true" aria-controls="accordion0">
+                           Signataire
+                        </button>
+                    </h2>
+                    <div id="accordion0" className="accordion-collapse collapse show"
+                         data-bs-parent="#accordionExample">
+                        <div className="accordion-body">
+                            <div className="row">
+                                <div className="col-md-1"></div>
+                                <div className="col-md-2">
+                                        <a className="nav-link dropdown-toggle hide-arrow" href="#"
+                                           data-bs-toggle="dropdown">
+                                            <div className="avatar avatar-offline">
+                                                <img src="/assets/img/icons/esignature/paper-plane.png" alt=""
+                                                     className="w-px-40 h-auto rounded-circle"/>
+                                            </div>
+                                        </a>
+                                </div>
+                                <div className="col-md-2">
+                                        <a className="nav-link dropdown-toggle hide-arrow" href="#"
+                                           data-bs-toggle="dropdown">
+                                            <div className="avatar avatar-offline">
+                                                <img src="/assets/img/icons/esignature/mail.png" alt=""
+                                                     className="w-px-40 h-auto rounded-circle"/>
+                                            </div>
+                                        </a>
+                                </div>
+                                <div className="col-md-2">
+                                        <a className="nav-link dropdown-toggle hide-arrow" href="#"
+                                           data-bs-toggle="dropdown">
+                                            <div className="avatar avatar-offline">
+                                                <img src="/assets/img/icons/esignature/open.png" alt=""
+                                                     className="w-px-40 h-auto rounded-circle"/>
+                                            </div>
+                                        </a>
+                                </div>
+                                <div className="col-md-2">
+                                        <a className="nav-link dropdown-toggle hide-arrow" href="#"
+                                           data-bs-toggle="dropdown">
+                                            <div className="avatar avatar-offline">
+                                                <img src="/assets/img/icons/esignature/folder.png" alt=""
+                                                     className="w-px-40 h-auto rounded-circle"/>
+                                            </div>
+                                        </a>
+                                </div>
+                                <div className="col-md-2">
+                                        <a className="nav-link dropdown-toggle hide-arrow" href="#"
+                                           data-bs-toggle="dropdown">
+                                            <div className="avatar avatar-offline">
+                                                <img src="/assets/img/icons/esignature/contract.png" alt=""
+                                                     className="w-px-40 h-auto rounded-circle"/>
+                                            </div>
+                                        </a>
+                                </div>
+
+                                <div className="col-md-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+            return signataireCollapse;
+        }
     }
 
     const getTheMessage=(has_error,el,dte)=>{
@@ -296,6 +367,51 @@ const ViewSending = ( ) => {
         </Popover>
     );
 
+    const downloadSigned =()=>{
+        axios
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/download/signed/document/'+id,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => {
+
+            }).catch(function (error) {
+            if (error.response) {
+            }
+        });
+    }
+    const downloadOriginal =()=>{
+        axios
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/download/original/document/'+id,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => {
+
+            }).catch(function (error) {
+            if (error.response) {
+            }
+        });
+    }
+    const downloadProof =()=>{
+        axios
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/download/proof/document/'+id,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => {
+
+            }).catch(function (error) {
+            if (error.response) {
+            }
+        });
+    }
     if(loader===true){
         return (<div className="d-flex justify-content-center">
             <div className={`spinner-grow text-primary text-center ${loader ? "" : "d-none"}`}  role="status">
@@ -414,15 +530,15 @@ const ViewSending = ( ) => {
                                                         <p> <b>Envoyer par: </b> {sendingData["created_by"]?.[0]?.name} </p>
                                                         <p> <b>Envoyer le : </b> {sendingData["created_at"]} </p>
                                                         <div className="text-center">
-                                                            <button className="btn btn-primary m-1">
+                                                            <button className={`btn btn-primary m-1  ${docIsSigned ? "" : "disabled"}`}  onClick={downloadSigned}>
                                                                 <span className="fa fa-download"></span>
                                                                 Document signer
                                                             </button>
-                                                            <button className="btn btn-primary m-1">
+                                                            <button className="btn btn-primary m-1" onClick={downloadOriginal}>
                                                                 <span className="fa fa-download"></span>
                                                                 Document original
                                                             </button>
-                                                            <button className="btn btn-primary m-1">
+                                                            <button className={`btn btn-primary m-1  ${haveProofFile ? "" : "disabled"}`} onClick={downloadProof}>
                                                                 <span className="fa fa-download"></span>
                                                                 Document probant
                                                             </button>

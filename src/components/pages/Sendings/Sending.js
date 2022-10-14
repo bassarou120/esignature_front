@@ -202,7 +202,7 @@ const Sending = (props) => {
                     }else{
                         var required =false
                     }
-                    var $el = $('<div class="drop-item form-group" id="'+drop_item_id+'" data-widget-type="'+ui.draggable.attr('data-name')+'" data-signataire="'+$('.the_selected_tag').first().attr('title')+'" data-page="'+page+'" data-isrequired="'+required+'" style="top:'+y+'px;left: '+x+'px " ><label><p  style="font-size: 10px" class="text-white" >' + ui.draggable.text() + '</p></label></div>');
+                    var $el = $('<div class="drop-item form-group" id="'+drop_item_id+'" data-widget-type="'+ui.draggable.attr('data-name')+'" data-signataire="'+$('.the_selected_tag').first().attr('title')+'" data-page="'+page+'" data-isrequired="'+required+'" style="top:'+y+'px;left: '+x+'px " ><label><p  style="font-size: 12px" class="text-white" ><b> ' + ui.draggable.text() + '</b></p></label></div>');
                     $el.append($('<button type="button" class="remove"><span class="fa fa-close"></span></button>').click(function () { $(this).parent().detach();updateNewVersion(); disabled_submit_btn(); this_number--; }));
                     $(this).find( ".widget_space" ).append($el);
                     makeItemDraggableAnd('#'+drop_item_id);
@@ -1023,8 +1023,10 @@ const Sending = (props) => {
                                                                                  style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`}}
 
                                                                             >
-                                                                                <label><p style={{fontSize:"10px"}}
-                                                                                          className="text-white dragable_element_label">{displayWidgetLabel(s.type_widget)}</p>
+                                                                                <label><p style={{fontSize:"12px"}}
+                                                                                          className="text-white dragable_element_label">
+                                                                                    <b>{displayWidgetLabel(s.type_widget)}</b>
+                                                                                </p>
                                                                                 </label>
                                                                                 <button type="button" className="remove" onClick={()=>removeWidget(s.widget_id)}>
                                                                                     <span className="fa fa-close"></span>

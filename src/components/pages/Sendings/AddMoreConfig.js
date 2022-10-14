@@ -204,22 +204,25 @@ const AddMoreConfig = (props) => {
     }
 
     const ExpirationInputChange = (e) => {
-        if (e.target.value === 'Personnaliser') {
-            $('#rappel_block').removeClass('d-none');
-        } else {
-            $('#rappel_block').addClass('d-none');
-            setExpiration(e.target.value);
+        if(e.target.id!=='expiration_day'){
+            if (e.target.value === 'Personnalisé') {
+                $('#expiration_block').removeClass('d-none');
+            } else {
+                $('#expiration_block').addClass('d-none');
+            }
         }
+        setExpiration(e.target.value);
     }
 
     const RappelInputChange = (e) => {
-
-        if (e.target.value === 'Personnaliser') {
-            $('#expiration_block').removeClass('d-none');
-        } else {
-            $('#expiration_block').addClass('d-none');
-            setRappel(e.target.value);
+        if(e.target.id!=='remember_day') {
+            if (e.target.value === 'Personnalisé') {
+                $('#rappel_block').removeClass('d-none');
+            } else {
+                $('#rappel_block').addClass('d-none');
+            }
         }
+        setRappel(e.target.value);
     }
 
     const UpdateSignataire = (e) => {
@@ -446,25 +449,25 @@ const AddMoreConfig = (props) => {
                                                     <option value="Quotidien">Quotidien</option>
                                                     <option value="Hebdomadaire">Hebdomadaire</option>
                                                     <option value="Mensuel">Mensuel</option>
-                                                    <option value="Personnaliser">Personnalisé</option>
+                                                    <option value="Personnalisé">Personnalisé</option>
                                                 </select>
                                             </div>
                                             <div className="mb-3 col-lg-6 col-xl-6 col-12 mb-0">
                                                 <label className="form-label" htmlFor="form-repeater-1-3">Expiration</label>
                                                 <select id="expiration" value={expiration} name="expiration" className="form-select" onChange={ExpirationInputChange}>
                                                     <option value="Aucun">Aucun</option>
-                                                    <option value="Personnaliser">Personnalisé</option>
+                                                    <option value="Personnalisé">Personnalisé</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div className="row">
                                             <div className="mb-3 col-lg-6 col-xl-6 col-12 mb-0 d-none" id="rappel_block">
                                                 <label className="form-label" htmlFor="form-repeater-1-3">Nombre de jours après l'envoi</label>
-                                                <input type="number" className="form-control" name="remember_day" id="remember_day" onChange={e => setRappel(e.target.value)} />
+                                                <input type="number" className="form-control" name="remember_day" id="remember_day" min="1" onChange={e => setRappel(e.target.value)} />
                                             </div>
                                             <div className="mb-3 col-lg-6 col-xl-6 col-12 mb-0 d-none" id="expiration_block">
                                                 <label className="form-label" htmlFor="form-repeater-1-3">Jours avant l'expiration</label>
-                                                <input className="form-control" type="number" name="expiration_day" id="expiration_day" onChange={e => setExpiration(e.target.value)} />
+                                                <input className="form-control" type="number" name="expiration_day" id="expiration_day" min="1" onChange={e => setExpiration(e.target.value)} />
                                             </div>
                                         </div>
 

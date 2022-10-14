@@ -134,6 +134,18 @@ const App = () => {
 
           <Switch>
 
+              <Route
+                  exact
+                  path="/"
+                  render={() => {
+                      return (
+                          localStorage.getItem('token') ?
+                              <Redirect to="/home" /> :
+                              <Redirect to="/login" />
+                      )
+                  }}
+              />
+
             <Route path="/login">
                 <Login />
             </Route>

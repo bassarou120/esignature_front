@@ -153,22 +153,17 @@ const ListingSending = () => {
         setLoader(true) ;
         var url = ''
         if($('.type.active').data('id')===0){
-            console.log('here')
              url = process.env.REACT_APP_API_BASE_URL + 'sendings/' + id_user + '/user'
         }
         else{
-            var param={
-                statut:statut
-            }
              url =process.env.REACT_APP_API_BASE_URL + 'sendings/' + id_user + '/user/'+ $('.type.active').data('id')
         }
-
-
-
+        var param={
+            statut:statut
+        }
         if(searchVal !==''){
             param['search_val']=searchVal;
         }
-
         axios
             .get(url, {
                 headers: {
