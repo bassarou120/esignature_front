@@ -22,6 +22,7 @@ const ViewSending = ( ) => {
     const [display_detail, setDisplayDetail] = useState(false);
     const [docIsSigned, setDocIsSigned] = useState(false);
     const [haveProofFile, setHaveProofFile] = useState(false);
+    const [fileName, setFileName] = useState('');
     var indents = [];
     const [loader, setLoader] = useState(true);
 
@@ -56,6 +57,8 @@ const ViewSending = ( ) => {
                         const myArray = f.split("/");
                         setFolder(myArray[0]);
                         setLoader(false);
+                        var n =response.data.data['document']?.[0]?.file
+                        setFileName(n.split('.pdf'));
                         if(response.data.data.statut[0].name ==='SIGNER'){
                             setDocIsSigned(true)
                         }
@@ -371,7 +374,7 @@ const ViewSending = ( ) => {
         axios
             .get(process.env.REACT_APP_API_BASE_URL+'sendings/download/signed/document/'+id,{
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/pdf',
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
             })
@@ -386,7 +389,7 @@ const ViewSending = ( ) => {
         axios
             .get(process.env.REACT_APP_API_BASE_URL+'sendings/download/original/document/'+id,{
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/pdf',
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
             })
@@ -401,8 +404,8 @@ const ViewSending = ( ) => {
         axios
             .get(process.env.REACT_APP_API_BASE_URL+'sendings/download/proof/document/'+id,{
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    'Content-Type': 'application/pdf',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 }
             })
             .then(response => {
@@ -530,18 +533,18 @@ const ViewSending = ( ) => {
                                                         <p> <b>Envoyer par: </b> {sendingData["created_by"]?.[0]?.name} </p>
                                                         <p> <b>Envoyer le : </b> {sendingData["created_at"]} </p>
                                                         <div className="text-center">
-                                                            <button className={`btn btn-primary m-1  ${docIsSigned ? "" : "disabled"}`}  onClick={downloadSigned}>
+                                                            <a className={`btn btn-primary m-1  ${docIsSigned ? "" : "disabled"}`} href={process.env.REACT_APP_BACKEND_ASSET_BASE_URL+'documents/'+fileName+'_signer.pdf'} download={fileName+'_signer'} target="_blank">
                                                                 <span className="fa fa-download"></span>
                                                                 Document signer
-                                                            </button>
-                                                            <button className="btn btn-primary m-1" onClick={downloadOriginal}>
+                                                            </a>
+                                                            <a className="btn btn-primary m-1" href={process.env.REACT_APP_BACKEND_ASSET_BASE_URL+'documents/'+sendingData.document[0].file} download={fileName} target="_blank"  type="application/pdf">
                                                                 <span className="fa fa-download"></span>
                                                                 Document original
-                                                            </button>
-                                                            <button className={`btn btn-primary m-1  ${haveProofFile ? "" : "disabled"}`} onClick={downloadProof}>
+                                                            </a>
+                                                            <a className={`btn btn-primary m-1  ${haveProofFile ? "" : "disabled"}`} href={process.env.REACT_APP_BACKEND_ASSET_BASE_URL+'documents/'+fileName+'_proof.pdf'} download={fileName+'_proof'} target="_blank">
                                                                 <span className="fa fa-download"></span>
                                                                 Document probant
-                                                            </button>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
