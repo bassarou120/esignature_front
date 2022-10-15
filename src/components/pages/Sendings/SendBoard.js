@@ -346,9 +346,9 @@ const Sendboard = ( ) => {
                     }
                     localStorage.setItem('already_signed',JSON.stringify(arr))
                     window['showSuccessToast']('Réponse envoyée avec succès')
-                    setTimeout(() => {
-                        window.close();
-                    }, 1000)
+                    // setTimeout(() => {
+                    //     window.close();
+                    // }, 8000)
 
                 }
             }).catch(function (error) {
@@ -446,7 +446,7 @@ const Sendboard = ( ) => {
                                                                                          id={s?.widget_id} data-widget-type={s?.type_widget}
                                                                                          data-signataire={s?.signataire} data-page={s?.page}
                                                                                          data-isrequired={s.required}
-                                                                                         style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`,cursor:'pointer',backgroundColor:'#F5F5F9'}}
+                                                                                         style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`,cursor:'pointer',backgroundColor:'#f5f5f900',border:'0px'}}
 
                                                                                     >
                                                                                         <label id={'label_'+s?.widget_id}>

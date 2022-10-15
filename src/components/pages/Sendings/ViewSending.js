@@ -58,8 +58,9 @@ const ViewSending = ( ) => {
                         setFolder(myArray[0]);
                         setLoader(false);
                         var n =response.data.data['document']?.[0]?.file
-                        setFileName(n.split('.pdf'));
-                        if(response.data.data.statut[0].name ==='SIGNER'){
+                        setFileName(n.split('.pdf')[0]);
+                        if(response.data.data.statut[0].name ==='FINIR'){
+                            console.log('here');
                             setDocIsSigned(true)
                         }
                         if(response.data.data.type_signature[0].type ==='simple'){

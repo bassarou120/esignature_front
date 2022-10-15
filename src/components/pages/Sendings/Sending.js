@@ -991,7 +991,7 @@ const Sending = (props) => {
                     </div>
 
                     <div className="row"  id="dragArea">
-                        <div className="col-md-2">
+                        <div className="col-md-2 d-none d-sm-block">
                             <div className="text-center" >
                                 { <img  src={process.env.REACT_APP_BACKEND_ASSET_BASE_URL+"previews/"+sendingData["document"]?.[0]?.preview}  alt="Avatar" className="dragable_element_label" width="175" unselectable="on" /> || <Skeleton />
                                 }
@@ -1003,13 +1003,13 @@ const Sending = (props) => {
                                     <p className="card-title mb-sm-0 me-2">{title}</p>
                                 </div>
                             </div>
-                            <div className="" id="main-container" style={{height: "900px", overflowY: "auto",overflowX:"hidden"}} >
+                            <div className="" id="main-container" style={{overflowY: "auto",overflowX:"hidden"}} >
                                 <div className="">
                                     <ul className="jss228" id="parent_ul">
                                         {
                                             imglist.map((l,k)=>  <div key={k} id={"img_page_"+l.page} className="jss255 dropzone">
-                                                <div className="jss257">
-                                                    <div className="jss262 ">
+                                                {/*<div className="jss257">*/}
+                                                {/*    <div className="jss262 ">*/}
                                                         <div className="jss263 widget_space" id={"widget_space_"+l.page} data-page={l.page}>
                                                             {config
                                                                 .map((s, i) => {
@@ -1039,8 +1039,8 @@ const Sending = (props) => {
                                                                     }
                                                                 })}
                                                         </div>
-                                                    </div>
-                                                </div>
+                                                    {/*</div>*/}
+                                                {/*</div>*/}
                                                 {<img className="jss256 "
                                                       src={l.src}
                                                       data-signa="document-editor-container" width="98%"/> || <Skeleton />}
@@ -1051,8 +1051,8 @@ const Sending = (props) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-xl-2 col-md-2 col-12 invoice-actions" style={{position:"relative"}}>
-                            <div className="card" id="field_card" style={{position:"fixed",top:"45%",overflowY:"scroll",height:"300px"}}>
+                        <div className="col-xl-2 col-md-2 col-12 invoice-actions">
+                            <div className="card" id="field_card">
                                 <div className="card-body ">
                                     <h5 className="card-title">Actions</h5>
                                     <div className=" nopadd drag-field " id="modules">
