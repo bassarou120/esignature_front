@@ -273,6 +273,7 @@ const Sendboard = ( ) => {
                 var id = identifiant.split('input_')[1];
                 var  val='';
                 var el = $( "#label_" + id);
+
                if($(this).attr('type')==='file'){
                    var file = document.getElementById($(this).attr('id')).files[0];
 
@@ -304,12 +305,14 @@ const Sendboard = ( ) => {
         if(sendingData.type_signature[0].type ==="avanced"){
             if(signature_url===''){
                 $('#signature_error').html('La signature est obligatoire')
+                console.log('Signature manquante')
             }
             else{
                 answer.push({
                     id: 'signature',
                     value:signature_url
                 })
+                localStorage.setItem('answer',JSON.stringify(answer))
                 $(".drop-item").each(function( index ) {
                     if($(this).data('widget-type') === 'signature'){
                         $(this).html('<img style="width:120% !important;" src="'+signature_url+'">')
