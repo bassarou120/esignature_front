@@ -16,6 +16,8 @@ const Register = () => {
     const [confirm_password, setConfirmPassword] = useState('');
     const [termAndCondition, setTermAndCondition] = useState(false);
     const [loading, setLoading] = useState(false);
+    var em='';
+    var id='';
 
     const  history= useHistory();
 
@@ -23,6 +25,16 @@ const Register = () => {
         const script = document.createElement("script");
         script.src = '../assets/js/validation/login.js';
         document.body.appendChild(script);
+
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+        em =atob(url.searchParams.get("email")) ;
+        id =url.searchParams.get("id") ;
+
+        if(em !==''){
+            setEmail(em);
+        }
+        console.log(em)
     }, [])
 
     const registerNewUser =(e)=>{
@@ -35,9 +47,10 @@ const Register = () => {
             .post( process.env.REACT_APP_API_BASE_URL+'register',
                 {
                     name:name,
-                    email:email,
+                    email: email,
                     password:password,
-                    password_confirmation:confirm_password
+                    password_confirmation:confirm_password,
+                    member_id:id
                 })
             .then(response => {
                 if(response.data.success === true){
@@ -77,7 +90,6 @@ const Register = () => {
         }
     }
 
-
     return (
         <div id="app">
             <Log_nav/>
@@ -96,8 +108,7 @@ const Register = () => {
                             className="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-5 p-4">
                             <div className="w-px-400 mx-auto">
                                 <div className="app-brand mb-5">
-                                    <a href="#" className="app-brand-link gap-2">
-            <span className="app-brand-logo demo">
+                                    <a href="#" className="app-brand-link gap-2"> <span className="app-brand-logo demo">
 
         <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg"
              xmlnsXlink="http://www.w3.org/1999/xlink">
@@ -143,8 +154,7 @@ const Register = () => {
         </svg>
 
         </span>
-                                        <span
-                                            className="app-brand-text demo text-body fw-bolder">{process.env.REACT_APP_NAME}</span>
+                                        <span className="app-brand-text demo text-body fw-bolder">{process.env.REACT_APP_NAME}</span>
                                     </a>
                                 </div>
                                 <h4 className="mb-2"> L'aventure commence ici 🚀</h4>
@@ -169,11 +179,16 @@ const Register = () => {
                                     </div>
                                     <div className="mb-3 fv-plugins-icon-container">
                                         <label form="email" className="form-label">Adresse Email</label>
-                                        <input type="text" className="form-control" id="email" name="email"
-                                               value={email} onChange={e => {
-                                            setEmail(e.target.value)
-                                        }}
-                                               placeholder="Enter your email"/>
+                                        {
+                                            em && em!=='' && <input type="text" className="form-control" id="email" name="email"
+                                                                       value={em} />
+                                        }
+                                        {
+                                            !em && <input type="text" className="form-control" id="email" name="email"
+                                                          value={ email} onChange={e => {setEmail(e.target.value)}}
+                                                          placeholder="Enter your email"/>
+                                        }
+
                                         <div className="fv-plugins-message-container invalid-feedback"></div>
                                         <span className="invalid-feedback" role="alert">
                                         <strong id="email_error"></strong>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {BrowserRouter as Router, Route, Switch, Link, useHistory,useLocation,Redirect} from 'react-router-dom';
 
 import Sidebar from './components/Sidebar';
@@ -36,6 +36,7 @@ import {decrypt} from "./components/Helper";
 import AccountActivationMailSent from "./components/pages/AccountActivationMailSent";
 import NoFound_error from "./components/pages/404";
 import Sendboard from "./components/pages/Sendings/SendBoard";
+import axios from "axios";
 window.$ = $;
 
 const App = () => {
@@ -55,9 +56,49 @@ const App = () => {
         window.addEventListener('load', function () {
             setLoader(false);
         })
-        checkUserIsLoggedIn();
+        var  notRequiredAuthPath ='/sendboard/';
+        var loc_pt = window.location.pathname;
+        if(!loc_pt.includes(notRequiredAuthPath)){
+            checkUserIsLoggedIn();
+        }
 
     }, [])
+
+    const [isLoggedOut, setIsLoggedOut] = useState(false);
+    const [timerId, setTimerId] = useState(false);
+    const renderCount = useRef(1);
+    useEffect(() => {
+        /*const autoLogout = () => {
+            var p =window.location.pathname;
+            if(!p.includes('sendboard')){
+                if (document.visibilityState === "hidden") {
+                    const id = window.setTimeout(() => auto_log_out(), 45 * 1000);
+                    setTimerId(id);
+                } else {
+                    window.clearTimeout(timerId);
+                }
+            }
+        };
+
+        document.addEventListener("visibilitychange", autoLogout);
+        return () => document.removeEventListener("visibilitychange", autoLogout);*/
+    }, [timerId]);
+
+    const auto_log_out=()=>{
+        axios
+            .post(process.env.REACT_APP_API_BASE_URL+'logout', {},{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => {
+                if(response.status===200){
+                    localStorage.clear();
+                    window.location.href='/login'
+                }
+            });
+    }
 
     const checkUserIsLoggedIn =()=>{
         let array =['/login','/register','/resetpassword','/forgetpassword']
@@ -114,13 +155,13 @@ const App = () => {
     const canAddModalChoice =()=>{
         const splitloc = window.location.href.split("/");
         const lk= splitloc[splitloc.length -1];
-        alert('helo')
+
         if(lk !=='login' || lk !=='register' || lk !=='forgetpassword' || lk !=='resetpassword'){
-           console.log('do not' )
+
             return true;
         }
         else{
-            console.log('do' )
+
             return false
         }
     }
@@ -153,9 +194,7 @@ const App = () => {
             <Route path="/register">
                 <Register/>
             </Route>
-              {/*<Route path="/wesentmail" render={}>*/}
-              {/*    <AccountActivationMailSent/>*/}
-              {/*</Route>*/}
+
               <Route path="/wesentmail" render={(props) => <AccountActivationMailSent {...props}/>}/>
 
             <Route path="/forgetpassword">

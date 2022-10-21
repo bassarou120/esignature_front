@@ -17,10 +17,9 @@ const Sidebar = ( ) => {
     const splitLocation = pathname.split("/");
 
     useEffect(() => {
-        const script = document.createElement("script");
-        script.src = '../assets/js/main-simple.js';
-        document.body.appendChild(script);
-
+            const script = document.createElement("script");
+            script.src = '../assets/js/main-simple.js';
+            document.body.appendChild(script);
     }, [])
 
         const showSubmenu = (e) =>{

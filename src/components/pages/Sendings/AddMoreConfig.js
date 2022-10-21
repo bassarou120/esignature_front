@@ -164,7 +164,9 @@ const AddMoreConfig = (props) => {
 
     const endSendingForm = (e) => {
         e.preventDefault();
-        window['startspinner']();
+
+        $('#spinner_btn').removeClass('d-none');
+        $('#sbt_btn').prop("disabled", true);
 
         var data = new FormData(this)
         data.append('id', id)
@@ -183,9 +185,7 @@ const AddMoreConfig = (props) => {
                     'Authorization': 'Bearer ' + localStorage.getItem('token'),
                     'Access-Control-Allow-Origin': '*',
                 }
-            })
-            .then(response => {
-
+            }).then(response => {
                 if (response.data.success === true) {
                     window['endspinner']();
                     $('#addMoreConfigForm').trigger("reset");
@@ -198,9 +198,23 @@ const AddMoreConfig = (props) => {
                     history.push('/detail/sending/' + id);
 
                 } else {
+                    $('#spinner_btn').addClass('d-none')
+                    $('#sbt_btn').prop("disabled", false);
                     console.log('error');
                 }
-            });
+            }).catch(function (error) {
+            if (error.response) {
+                if(error.response.status===400){
+                    $('#modal_error_ul').html('');
+                    $('#modal_error').removeClass('d-none');
+                    $.each(error.response.data.data, function (key, value) {
+                        $('#modal_error_ul').append('<li class="list-group-item">' + value + '</li>');
+                    });
+                }
+                $('#spinner_btn').addClass('d-none')
+                $('#sbt_btn').prop("disabled", false);
+            }
+        });
     }
 
     const ExpirationInputChange = (e) => {
@@ -361,7 +375,6 @@ const AddMoreConfig = (props) => {
                                                         <span className="align-middle">Ajouter</span>
                                                     </button>
                                                 </div>
-
                                         </div>
                                     </div>
                                 </div>

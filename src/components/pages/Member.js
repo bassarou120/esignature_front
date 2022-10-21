@@ -170,7 +170,7 @@ const Member = ( ) => {
         $('#spinner_btn').removeClass('d-none');
         $('#sbt_btn').prop("disabled", true);
         axios
-            .post(process.env.REACT_APP_API_BASE_URL + 'contacts', {
+            .post(process.env.REACT_APP_API_BASE_URL + 'members', {
                 id:id,
                 name: name,
                 email: email,
@@ -269,7 +269,7 @@ const Member = ( ) => {
             return <span className="badge bg-success">Admin</span>;
         }
         else{
-            return <span className="badge bg-danger">Membre</span>;
+            return <span className="badge bg-primary">Membre</span>;
         }
     }
 
@@ -415,7 +415,8 @@ const Member = ( ) => {
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Role</th>
-                                            <th>Date d'ajout</th>
+                                            <th>Statut</th>
+                                            {/*<th>Date d'ajout</th>*/}
                                             <th>Action</th>
                                         </tr>
                                         </thead>
@@ -439,7 +440,8 @@ const Member = ( ) => {
                                             </td>
                                             <td>{l.email}</td>
                                             <td>{renderSpan(l.role)}</td>
-                                            <td>{l.created_at}</td>
+                                            <td>{l.member ? <span className="text-primary"></span> : <span className="text-danger">En cours </span>}</td>
+                                            {/*<td>{l.created_at}</td>*/}
                                             <td>
                                                 <div className="d-flex justify-content-center">
                                                     <a className="dropdown-item edit" href="#" data-id={l.id} ><i className="bx bx-edit-alt me-1"></i></a>

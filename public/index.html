@@ -246,6 +246,42 @@
         }
     </style>
 
+    <style>
+        #scroll {
+            position:fixed;
+            right:10px;
+            bottom:10px;
+            cursor:pointer;
+            width:50px;
+            height:50px;
+            background-color:#3498db;
+            text-indent:-9999px;
+            display:none;
+            -webkit-border-radius:60px;
+            -moz-border-radius:60px;
+            border-radius:60px
+        }
+        #scroll span {
+            position:absolute;
+            top:50%;
+            left:50%;
+            margin-left:-8px;
+            margin-top:-12px;
+            height:0;
+            width:0;
+            border:8px solid transparent;
+            border-bottom-color:#ffffff;
+        }
+        #scroll:hover {
+            background-color:#e74c3c;
+            opacity:1;filter:"alpha(opacity=100)";
+            -ms-filter:"alpha(opacity=100)";
+        }
+
+        .hr_left {
+            border-left: 1px dashed #333;
+        }
+    </style>
 </head>
 
 <body>
@@ -313,10 +349,41 @@
                 $('#serveur_side_error').append('<li>' + value + '</li>');
             });
         }
+        function touchHandler(event) {
+             var touch = event.changedTouches[0];
+             var simulatedEvent = document.createEvent("MouseEvent");
+            simulatedEvent.initMouseEvent({
+                    touchstart: "mousedown",
+                    touchmove: "mousemove",
+                    touchend: "mouseup"
+                }[event.type], true, true, window, 1,
+                touch.screenX, touch.screenY,
+                touch.clientX, touch.clientY, false,
+                false, false, false, 0, null);
 
+             touch.target.dispatchEvent(simulatedEvent);
+            // event.preventDefault();
+        }
+
+        function init() {
+            document.addEventListener("touchstart", touchHandler, true);
+            document.addEventListener("touchmove", touchHandler, true);
+            document.addEventListener("touchend", touchHandler, true);
+            document.addEventListener("touchcancel", touchHandler, true);
+        }
         $(document).ready(function() {
-
-
+            init();
+            $(window).scroll(function(){
+                if ($(this).scrollTop() > 100) {
+                    $('#scroll').fadeIn();
+                } else {
+                    $('#scroll').fadeOut();
+                }
+            });
+            $('#scroll').click(function(){
+                $("html, body").animate({ scrollTop: 0 }, 600);
+                return false;
+            });
         });
 
     </script>
@@ -343,6 +410,7 @@
     <script src="%PUBLIC_URL%/assets/js/moreconfig.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
     <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+    <script src=" %PUBLIC_URL%/assets/vendor/libs/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
 <!--    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>-->
 
 </body>
