@@ -181,6 +181,8 @@ const Sending = (props) => {
                // console.log(implement_widget_count)
                 var drop_item_id= ui.draggable.attr('data-name')+'_'+this_number;
 
+                console.log($this.parent())
+
                 if(ui.draggable.hasClass('draggable_field')){
                     if (sendingData["type_signature"]?.[0]?.type==='avanced'){
                         if (ui.draggable.attr('data-name')==='signature'){
@@ -215,6 +217,7 @@ const Sending = (props) => {
                 disabled_submit_btn();
             }
         })
+
         makeItemDraggableAnd();
 
         disabled_submit_btn();
@@ -297,8 +300,9 @@ const Sending = (props) => {
          .draggable({
             addClasses: false,
             scroll: true,
-            scrollSensitivity: 50,
-            scrollSpeed: 50
+            scrollSensitivity: 100,
+            scrollSpeed: 100,
+            containment: ".dropzone"
         })
         .dblclick(function(e){
             setWidget_id($(this).attr('id'));
@@ -871,7 +875,6 @@ const Sending = (props) => {
             const button = TagifyEmailListEl1.nextElementSibling; // "add new tag" action-button
             setJvexec(1)
         }, 500);
-
        // } );
     });
 
@@ -975,23 +978,26 @@ const Sending = (props) => {
                     <DataLoadingSpinner loader={loader}/>
                     <div className="destinataire card">
                         <div className="card-body">
-                            <h5>Ajouter des signataires</h5>
-                            <input id="TagifyEmailList" className="tagify-email-list"  onChange ={handleInputChange}  />
-                            <button type="button" id="addNewTag" className="btn btn-outline-primary btn-icon rounded-pill" >
-                                <span className="tf-icons bx bx-plus"/></button>
-                            {model_name_field()}
-                            {/*<h5>Définissez une police</h5>*/}
-                            <div className="mb-3 col-md-3">
-                                <label htmlFor="police" className="form-label">Définissez une police
-                                </label>
-                                <input type="number" className="form-control" id="police" required value={police} onChange={e=>{setPolice(e.target.value)}} max="30" />
+                            <h5>Signataires</h5>
+                            <div className="row">
+                                <div className="col-md-8">
+                                    <label htmlFor="TagifyEmailList" className="form-label">Ajouter les signataire</label><br/>
+                                    <input id="TagifyEmailList" className="tagify-email-list"  onChange ={handleInputChange}  />
+                                    <button type="button" id="addNewTag" className="btn btn-outline-primary btn-icon rounded-pill" >
+                                        <span className="tf-icons bx bx-plus"/></button>
+                                    {model_name_field()}
+                                </div>
+                                <div className="col-md-4">
+                                    <label htmlFor="police" className="form-label">Définissez une police</label>
+                                    <input type="number" className="form-control" id="police" required value={police} onChange={e=>{setPolice(e.target.value)}} max="30" />
+                                </div>
                             </div>
                         </div>
 
                     </div>
 
                     <div className="row"  id="dragArea">
-                        <div className="col-md-2 d-none d-sm-block">
+                        <div className="col-md-2 d-none d-lg-block">
                             <div className="text-center" >
                                 { <img  src={process.env.REACT_APP_BACKEND_ASSET_BASE_URL+"previews/"+sendingData["document"]?.[0]?.preview}  alt="Avatar" className="dragable_element_label" width="175" unselectable="on" /> || <Skeleton />
                                 }
@@ -1003,7 +1009,7 @@ const Sending = (props) => {
                                     <p className="card-title mb-sm-0 me-2">{title}</p>
                                 </div>
                             </div>
-                            <div className="" id="main-container" style={{overflowY: "auto",overflowX:"hidden"}} >
+                            <div className="" id="main-container" style={{height:'550px',overflowY: "auto",overflowX:"hidden"}} >
                                 <div className="">
                                     <ul className="jss228" id="parent_ul">
                                         {
@@ -1061,7 +1067,7 @@ const Sending = (props) => {
                                                 if(sendingData["type_signature"]?.[0]?.type!=='avanced' && l.name==='signature'){
                                                     return false;
                                                 }
-                                                if(sendingData["type_signature"]?.[0]?.type!=='simple' && l.name==='certificat'){
+                                                if(sendingData["tpe_signature"]?.[0]?.type!=='simple' && l.name==='certificat'){
                                                     return false;
                                                 }
                                                 return true;

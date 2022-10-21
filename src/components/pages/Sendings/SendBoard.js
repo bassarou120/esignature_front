@@ -25,13 +25,16 @@ const Sendboard = ( ) => {
     const [imglist, setImglist] = useState([]);
     const [canDisplay,setCanDisplay]=useState(false);
     const [asAnswer,setAsAnswer]=useState(false);
+    const [answer,setAnswer]=useState([]);
     const [agree, setAgree] = useState(false);
+    const [isValidataire, setIsValidataire] = useState(false);
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const [config, setConfig] = useState([]);
     const [widget, setWidget] = useState([]);
     const [signature_url, setSignature_url] = useState([]);
     const [signataire_answer, setSignataire_answer] = useState([]);
+    const [usableAnswer, setUsableAnswer] = useState([]);
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -46,6 +49,7 @@ const Sendboard = ( ) => {
                 setIpInfo(JSON.stringify(data, null, 2));
             });
         }
+
     }, [])
 
     function canAccessPage(){
@@ -69,7 +73,7 @@ const Sendboard = ( ) => {
 
     function getSendingInfo(){
         axios
-            .get(process.env.REACT_APP_API_BASE_URL+'sendings/'+params.idsending,{
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/public/'+params.idsending,{
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -100,6 +104,8 @@ const Sendboard = ( ) => {
                                 localStorage.setItem('widgets', response.data.data["configuration"]);
                                 setConfig(JSON.parse(response.data.data["configuration"]));
                             }
+
+                            setAnswer(JSON.parse(response.data.data["response"]));
                             setImglist(inter);
                         }
                     }
@@ -115,7 +121,7 @@ const Sendboard = ( ) => {
 
     function getSignataireWidget(){
         axios
-            .get(process.env.REACT_APP_API_BASE_URL+'sendings/bysignataire/'+params.idsending+'/'+params.signataire,{
+            .get(process.env.REACT_APP_API_BASE_URL+'sendings/bysignataire/public/'+params.idsending+'/'+params.signataire,{
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -125,6 +131,10 @@ const Sendboard = ( ) => {
                 if(response.data.success === true){
                     var w = JSON.parse(response.data.data.widget)
                     setWidget(w)
+                    if(response.data.data.type ==='Validataire'){
+                        setIsValidataire(true)
+                    }
+
                     if(response.data.data.signataire_answer){
                         setAsAnswer(false)
                     }
@@ -207,7 +217,7 @@ const Sendboard = ( ) => {
                         <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
                             {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
                         </label>
-                        <input type="text" className="form-control" id={'input_'+s.widget_id} required={s.required === true } placeholder="Text" />
+                        <input type="text" className="form-control"  value={usableAnswer[s.widget_id]} id={'input_'+s.widget_id} required={s.required === true } placeholder="Text" />
                     </div>)
                     break;
                 case 'number_field':
@@ -215,7 +225,7 @@ const Sendboard = ( ) => {
                         <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
                             {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
                         </label>
-                        <input type="number" className="form-control" id={'input_'+s.widget_id} required={s.required === true } placeholder="Text"/>
+                        <input type="number" className="form-control" value={usableAnswer[s.widget_id]} id={'input_'+s.widget_id} required={s.required === true } placeholder="Text"/>
                     </div>)
                     break;
                 case 'select_field':
@@ -246,6 +256,7 @@ const Sendboard = ( ) => {
                                {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
                            </label>
                            <input className="form-control" type="file" accept="image/*" id={'input_'+s.widget_id} required={s.required === true }/>
+                           <img id={'img_'+s.widget_id} src={usableAnswer[s.widget_id]} alt=""/>
                          </div>)
                     break;
 
@@ -267,12 +278,15 @@ const Sendboard = ( ) => {
     const fillForm =(e)=>{
         e.preventDefault();
         var answer =[];
+        var use_ans=[];
+        var ans=[];
         $("#form_answer input").each(function( index ) {
             if($(this).attr('id')!=='confirm'){
                 var identifiant  =  $(this).attr('id');
                 var id = identifiant.split('input_')[1];
                 var  val='';
                 var el = $( "#label_" + id);
+                var drop_elem = $( "#" + id);
 
                if($(this).attr('type')==='file'){
                    var file = document.getElementById($(this).attr('id')).files[0];
@@ -284,8 +298,11 @@ const Sendboard = ( ) => {
                            id: id,
                            value: reader.result,
                        })
+                       ans[id] = reader.result;
+                      // use_ans.push(ans);
                        //console.log(answer)
                        localStorage.setItem('answer',JSON.stringify(answer))
+
                        el.html('<img style="width:100% !important;" src="'+reader.result+'">')
                    }
                    reader.readAsDataURL(file);
@@ -296,10 +313,14 @@ const Sendboard = ( ) => {
                            id: id,
                            value:val,
                      })
+                   ans[id] = val;
+                   //use_ans.push(ans);
                    el.html(val)
                    localStorage.setItem('answer',JSON.stringify(answer))
                }
+               drop_elem.css({"background-color":"rgb(245 245 249 / 0%)", "border":"0px"});
             }
+
         });
         //console.log(answer)
         if(sendingData.type_signature[0].type ==="avanced"){
@@ -312,24 +333,37 @@ const Sendboard = ( ) => {
                     id: 'signature',
                     value:signature_url
                 })
+                ans['signature'] = signature_url;
+                //use_ans.push(ans);
                 localStorage.setItem('answer',JSON.stringify(answer))
                 $(".drop-item").each(function( index ) {
                     if($(this).data('widget-type') === 'signature'){
+                        $(this).css({"background-color":"rgb(245 245 249 / 0%)", "border":"0px"});
                         $(this).html('<img style="width:120% !important;" src="'+signature_url+'">')
                     }
                 });
-                setSignataire_answer(JSON.stringify(answer));
-            }
-        }
 
+                setSignataire_answer(JSON.stringify(answer));
+
+            }
+
+        }
+        setUsableAnswer(ans);
         handleClose();
         changeReadAndOk();
     }
 
     const sendData=(e)=>{
 
+        if(isValidataire){
+            var url = process.env.REACT_APP_API_BASE_URL+'sendings/doc/validate';
+        }
+        else{
+            var url = process.env.REACT_APP_API_BASE_URL+'sendings/doc/signed';
+        }
+
        axios
-            .put(process.env.REACT_APP_API_BASE_URL+'sendings/doc/signed',{
+            .put(url,{
                 id_sending : params.idsending,
                 id_signataire:params.signataire,
                 answer:localStorage.getItem('answer'),
@@ -358,9 +392,86 @@ const Sendboard = ( ) => {
         });
     }
 
+    const revoke=(e)=>{
+
+       axios
+            .put(process.env.REACT_APP_API_BASE_URL+'sendings/doc/revoke',{
+                id_sending : params.idsending,
+                id_signataire:params.signataire,
+                mobile_info: JSON.stringify({
+                    userAgent:window.navigator.userAgent,
+                    ipAdress:ipInfo
+                }),
+            })
+            .then(response => {
+                if(response.data.success===true){
+                    var arr = {
+                        sending: params.idsending,
+                        signataire: params.signataire
+                    }
+                    localStorage.setItem('already_signed',JSON.stringify(arr))
+                    window['showSuccessToast']('Document rejeté')
+                }
+            }).catch(function (error) {
+            if (error.response) {
+                console.log('error');
+            }
+        });
+    }
+
     const changeReadAndOk =(e)=>{
         setAgree(!agree);
     }
+
+    const showFilledForm =(e)=>{
+        if(isValidataire){
+            return;
+        }
+        var answer = JSON.parse(localStorage.getItem('answer'));
+        $.each(answer, function( index, value ) {
+            var val = value.value;
+            if(val.includes('data:image')){
+                if(value.id=='signature'){
+                    $('#img_signature').attr('src',usableAnswer[value.id]);
+                }
+                else{
+                    $('#img_'+value.id).attr('src',usableAnswer[value.id]);
+                }
+            }
+            else{
+                //console.log('input_'+value.id);
+                $('#input_'+value.id).val(usableAnswer[value.id]);
+                //$('#input_name_2').val(value.value);
+                console.log(usableAnswer[value.id])
+            }
+
+        });
+        handleShow();
+    }
+
+    function getanswerWithId(id){
+        $.each(answer, function( index, value ) {
+            if(value.id==id){
+                return value.value;
+            }
+        });
+    }
+
+    function isTextWidget(widget){
+        var text_field = ['name','first_name','last_name','entreprise','city','text_field','age','number_field'];
+        var image_field = ['signature','image','certificat'];
+        if(text_field.includes(widget)){
+            return true;
+        }
+        else if(image_field.includes(widget)){
+           return  false
+        }
+        else{
+            return false ;
+        }
+
+    }
+
     if(canDisplay){
         return (
             <div className='layout-wrapper layout-content-navbar'>
@@ -373,21 +484,40 @@ const Sendboard = ( ) => {
                                 <div className="col-md-2">
                                 </div>
                                 <div className="col-md-8">
-                                    <div id="sticky-wrapper" className="sticky-wrapper" >
+                                    <div id="sticky-wrapper" className={`sticky-wrapper  ${isValidataire ? "fixed-top bg-white" : ""}`} >
                                         <div  className="card-header" >
                                             <div className="d-flex justify-content-between">
                                                 <div>
-                                                    <p className="card-title mb-sm-0">{title}</p>
+                                                    <p className=""><strong>Document:</strong> {title}</p>
+                                                    <div className="form-check form-check-inline">
+                                                        <input className="form-check-input" type="checkbox"
+                                                               id="confirm" onChange={changeReadAndOk}/>
+                                                        <label className="form-check-label"
+                                                               htmlFor="confirm">J'accepte les termes et <a href=""> condition de la plateforme</a></label>
+                                                    </div>
                                                 </div>
-                                                {asAnswer &&
+                                                {asAnswer && !isValidataire &&
                                                 <div className="">
                                                     <div className="demo-inline-spacing">
-                                                        <button type="submit" className="btn btn-primary" id="open_form" onClick={handleShow}>
+                                                        <button type="button" className="btn btn-primary" id="open_form" onClick={handleShow}>
                                                             Remplir comme un formulaire
                                                         </button>
                                                         <button type="submit" className=" btn btn-success" id="sbt_btn" onClick={sendData}>
                                                             <span className="spinner-border d-none" role="status" aria-hidden="true" id="spinner_btn" />
                                                             Envoyer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                }
+                                                {asAnswer && isValidataire &&
+                                                <div className="">
+                                                    <div className="demo-inline-spacing">
+                                                        <button type="button" className={`btn btn-danger ${agree ? "" : "disabled"}`}  id="revoke" onClick={revoke}>
+                                                            Rejeter
+                                                        </button>
+                                                        <button type="submit" className={`btn btn-success ${agree ? "" : "disabled"}`}  id="sbt_btn" onClick={sendData}>
+                                                            <span className="spinner-border d-none" role="status" aria-hidden="true" id="spinner_btn" />
+                                                            Valider
                                                         </button>
                                                     </div>
                                                 </div>
@@ -429,7 +559,7 @@ const Sendboard = ( ) => {
                                         </form>
                                     </Modal>
 
-                                    <div className="" id="main-container" style={{height: "900px", overflowY: "auto",overflowX:"hidden"}} >
+                                    <div className={`  ${isValidataire ? "mt-5" : ""}`} id="main-container" style={{height: "900px", overflowY: "auto",overflowX:"hidden"}} >
                                         <div className="">
                                             <ul className="jss228" id="parent_ul">
                                                 {
@@ -441,14 +571,24 @@ const Sendboard = ( ) => {
                                                                         .map((s, i) => {
                                                                             if(l.page==s.page){
                                                                                 return (
-                                                                                    <div key ={i} onClick={()=>{handleShow()}}
+                                                                                    <div key ={i} onClick={()=>{showFilledForm()}}
                                                                                          className="drop-item form-group"
                                                                                          id={s?.widget_id} data-widget-type={s?.type_widget}
                                                                                          data-signataire={s?.signataire} data-page={s?.page}
                                                                                          data-isrequired={s.required}
-                                                                                         style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`,cursor:'pointer',backgroundColor:'#f5f5f900',border:'0px'}}
-
+                                                                                         style={{ top: `${s.positionY}px`, left: `${s.positionX}px`, width: `${s.width}`,height: `${s.height}`,cursor:'pointer',position:"fixed"}}
                                                                                     >
+                                                                                        {
+                                                                                            isValidataire && s.required && isTextWidget(s.type_widget) &&
+                                                                                            <label id={'label_'+s?.widget_id}>
+                                                                                                <p style={{fontSize:`${sendingData.police}px`}} className="text-black">{getanswerWithId(s.id)} </p>
+                                                                                            </label>
+                                                                                        }
+                                                                                        {
+                                                                                            isValidataire && s.required && !isTextWidget(s.type_widget) &&
+                                                                                            <img style={{width:"100% !important"}} src={getanswerWithId(s.id)} />
+
+                                                                                        }
                                                                                         <label id={'label_'+s?.widget_id}>
                                                                                             <p style={{fontSize:"10px"}} className="text-black">{s.type_widget==='certificat' ? 'Certificat' :displayWidgetLabel(s.type_widget)} </p>
                                                                                         </label>
@@ -480,6 +620,8 @@ const Sendboard = ( ) => {
 
                             <Footer/>
                             <div className="content-backdrop fade"></div>
+                            <a href="#" id="scroll" style={{display: "none"}}><span></span></a>
+
                         </div>
                     </div>
                 </div>

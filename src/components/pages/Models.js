@@ -12,7 +12,6 @@ import {Link} from "react-router-dom";
 import Footer from "../Footer";
 window.$ = $;
 
-
 const Models = () => {
 
     function openChoiceModal() {
