@@ -37,7 +37,7 @@ const ViewSending = ( ) => {
         },45*1000);
         return () => clearInterval(interval);
 
-    }, [])
+    }, [docIsSigned])
 
 
     const getSendingDetail = (e) => {

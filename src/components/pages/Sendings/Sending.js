@@ -181,8 +181,6 @@ const Sending = (props) => {
                // console.log(implement_widget_count)
                 var drop_item_id= ui.draggable.attr('data-name')+'_'+this_number;
 
-                console.log($this.parent())
-
                 if(ui.draggable.hasClass('draggable_field')){
                     if (sendingData["type_signature"]?.[0]?.type==='avanced'){
                         if (ui.draggable.attr('data-name')==='signature'){

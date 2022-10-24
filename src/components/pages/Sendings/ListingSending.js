@@ -176,7 +176,6 @@ const ListingSending = () => {
                 if (response.data.success === true) {
                     const endOffset = itemOffset + parseInt(itemsPerPage);
                         setCurrentItems(response.data.data.slice(itemOffset, endOffset));
-                        console.log(response.data.data)
                         setData(response.data.data);
                         setPageCount(Math.ceil(response.data.data.length / itemsPerPage));
                         setLoader(false) ;
