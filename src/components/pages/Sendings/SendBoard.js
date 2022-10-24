@@ -489,12 +489,15 @@ const Sendboard = ( ) => {
                                             <div className="d-flex justify-content-between">
                                                 <div>
                                                     <p className=""><strong>Document:</strong> {title}</p>
-                                                    <div className="form-check form-check-inline">
-                                                        <input className="form-check-input" type="checkbox"
-                                                               id="confirm" onChange={changeReadAndOk}/>
-                                                        <label className="form-check-label"
-                                                               htmlFor="confirm">J'accepte les termes et <a href=""> condition de la plateforme</a></label>
-                                                    </div>
+                                                    {isValidataire &&
+                                                        <div className="form-check form-check-inline">
+                                                            <input className="form-check-input" type="checkbox"
+                                                                   id="confirm" onChange={changeReadAndOk}/>
+                                                            <label className="form-check-label"
+                                                                   htmlFor="confirm">J'accepte les termes et <a href=""> condition de la plateforme</a></label>
+                                                        </div>
+                                                    }
+
                                                 </div>
                                                 {asAnswer && !isValidataire &&
                                                 <div className="">

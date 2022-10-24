@@ -34,7 +34,7 @@ const Register = () => {
         if(em !==''){
             setEmail(em);
         }
-        console.log(em)
+       // console.log(em)
     }, [])
 
     const registerNewUser =(e)=>{
