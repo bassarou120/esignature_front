@@ -1011,7 +1011,7 @@ const Sending = (props) => {
                                 <div className="">
                                     <ul className="jss228" id="parent_ul">
                                         {
-                                            imglist.map((l,k)=>  <div key={k} id={"img_page_"+l.page} className="jss255 dropzone">
+                                            imglist.map((l,k)=>  <div key={k} id={"img_page_"+l.page} className="jss255 dropzone" style={{ overflow: 'auto'}}>
                                                 {/*<div className="jss257">*/}
                                                 {/*    <div className="jss262 ">*/}
                                                         <div className="jss263 widget_space" id={"widget_space_"+l.page} data-page={l.page}>
@@ -1044,10 +1044,10 @@ const Sending = (props) => {
                                                                 })}
                                                         </div>
                                                     {/*</div>*/}
-                                                {/*</div>*/}
+                                                {/*</div> width="98%"*/}
                                                 {<img className="jss256 "
                                                       src={l.src}
-                                                      data-signa="document-editor-container" width="98%"/> || <Skeleton />}
+                                                      data-signa="document-editor-container" style={{ width: '753px'}}   /> || <Skeleton />}
                                             </div>)
                                         }
                                         <span style={{fontSize: "0px"}}></span>
