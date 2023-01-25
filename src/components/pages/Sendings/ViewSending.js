@@ -34,6 +34,7 @@ const ViewSending = ( ) => {
         getValidataireStatus();
         const interval = setInterval(() => {
             getSignataireAndStatus();
+            getSendingDetail();
         },45*1000);
         return () => clearInterval(interval);
 
@@ -62,10 +63,11 @@ const ViewSending = ( ) => {
                         if(response.data.data.statut[0].name ==='FINIR'){
                             console.log('here');
                             setDocIsSigned(true)
+                            if(response.data.data.type_signature[0].type !=='recommandes'){
+                                setHaveProofFile(true)
+                            }
                         }
-                        if(response.data.data.type_signature[0].type ==='simple'){
-                            setHaveProofFile(true)
-                        }
+
                     }
                     else{
                         setDisplayDetail(false);
@@ -416,6 +418,7 @@ const ViewSending = ( ) => {
             }
         });
     }
+
     if(loader===true){
         return (<div className="d-flex justify-content-center">
             <div className={`spinner-grow text-primary text-center ${loader ? "" : "d-none"}`}  role="status">

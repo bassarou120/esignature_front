@@ -985,10 +985,13 @@ const Sending = (props) => {
                                         <span className="tf-icons bx bx-plus"/></button>
                                     {model_name_field()}
                                 </div>
-                                <div className="col-md-4">
-                                    <label htmlFor="police" className="form-label">Définissez une police</label>
-                                    <input type="number" className="form-control" id="police" required value={police} onChange={e=>{setPolice(e.target.value)}} max="30" />
-                                </div>
+                                {
+                                    sendingData["type_signature"]?.[0]?.type!=='recommandes' && <div className="col-md-4">
+                                        <label htmlFor="police" className="form-label">Définissez une police</label>
+                                        <input type="number" className="form-control" id="police" required value={police} onChange={e=>{setPolice(e.target.value)}} max="30" />
+                                    </div>
+                                }
+
                             </div>
                         </div>
 
@@ -1056,43 +1059,49 @@ const Sending = (props) => {
                             </div>
                         </div>
                         <div className="col-xl-2 col-md-2 col-12 invoice-actions">
-                            <div className="card" id="field_card">
-                                <div className="card-body ">
-                                    <h5 className="card-title">Actions</h5>
-                                    <div className=" nopadd drag-field " id="modules">
-                                        {sendingParameter
-                                            .filter(l => {
-                                                if(sendingData["type_signature"]?.[0]?.type!=='avanced' && l.name==='signature'){
-                                                    return false;
-                                                }
-                                                if(sendingData["tpe_signature"]?.[0]?.type!=='simple' && l.name==='certificat'){
-                                                    return false;
-                                                }
-                                                return true;
-                                                // return (
-                                                //     sendingData["type_signature"]?.[0]?.type!=='avanced' && l.name==='signature'
-                                                // );
-                                            })
-                                            .map((l, k) => {
-                                                return (
-                                                    <div className="report-list-item border border-secondary p-1 rounded-2 mb-2 drag cursor-move draggable_field"  data-name={l.name} key={k} >
-                                                        <div className="d-flex align-items-center" style={{fontSize:"12px"}}>
-                                                            <div className="report-list-icon shadow-sm me-2">
-                                                                <span className={l.icon}/>
-                                                            </div>
-                                                            <div className="d-flex justify-content-between align-items-end w-100 flex-wrap gap-2">
-                                                                <div className="d-flex flex-column">
-                                                                    <span>{l.label}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
+                            {
+                               sendingData["type_signature"]?.[0]?.type!=='recommandes' && <div  className="card" id="field_card">
+                                   <div className="card-body ">
+                                       <h5 className="card-title">Actions</h5>
+                                       <div className=" nopadd drag-field " id="modules">
+                                           {sendingParameter
+                                               .filter(l => {
+                                                   if(sendingData["type_signature"]?.[0]?.type!=='avanced' && l.name==='signature'){
+                                                       return false;
+                                                   }
+                                                   if(sendingData["type_signature"]?.[0]?.type!=='simple' && l.name==='certificat'){
+                                                       return false;
+                                                   }
+                                                   if(sendingData["type_signature"]?.[0]?.type==='recommandes' ){
+                                                       return false;
+                                                   }
+                                                   return true;
+                                                   // return (
+                                                   //     sendingData["type_signature"]?.[0]?.type!=='avanced' && l.name==='signature'
+                                                   // );
+                                               })
+                                               .map((l, k) => {
+                                                   return (
+                                                       <div className="report-list-item border border-secondary p-1 rounded-2 mb-2 drag cursor-move draggable_field"  data-name={l.name} key={k} >
+                                                           <div className="d-flex align-items-center" style={{fontSize:"12px"}}>
+                                                               <div className="report-list-icon shadow-sm me-2">
+                                                                   <span className={l.icon}/>
+                                                               </div>
+                                                               <div className="d-flex justify-content-between align-items-end w-100 flex-wrap gap-2">
+                                                                   <div className="d-flex flex-column">
+                                                                       <span>{l.label}</span>
+                                                                   </div>
+                                                               </div>
+                                                           </div>
+                                                       </div>
+                                                   );
+                                               })}
 
-                                    </div>
-                                </div>
-                            </div>
+                                       </div>
+                                   </div>
+                               </div>
+                            }
+
                         </div>
                     </div>
 

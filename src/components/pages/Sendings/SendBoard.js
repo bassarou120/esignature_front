@@ -191,88 +191,110 @@ const Sendboard = ( ) => {
         var image_field = ['image'];
         var certificat_field = ['certificat'];
         var form = [];
+        var distinct_field_type= [];
         {widget.map((s, i) => {
             var cas = '';
             if(text_field.includes(s.type_widget)){
                 cas = 'text_field';
+                distinct_field_type.push('text_field')
+               // distinct_field_type.indexOf('text_field') === -1 ? distinct_field_type.push('text_field') : '';
             }
             if(number_field.includes(s.type_widget)){
                 cas = 'number_field';
+                distinct_field_type.push('number_field');
             }
             if(select_field.includes(s.type_widget)){
                 cas = 'select_field';
+                 distinct_field_type.push('select_field');
             }
             if(signature_field.includes(s.type_widget)){
                 cas = 'signature_field';
+                 distinct_field_type.push('signature_field');
             }
             if(image_field.includes(s.type_widget)){
                 cas = 'image_field';
+                 distinct_field_type.push('image_field');
             }
             if(certificat_field.includes(s.type_widget)){
                 cas = 'certificat_field';
+                distinct_field_type.push('certificat_field') ;
             }
-            switch (cas) {
-                case 'text_field':
-                    form.push(<div key={i} className="mb-3">
-                        <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
-                            {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
-                        </label>
-                        <input type="text" className="form-control"  value={usableAnswer[s.widget_id]} id={'input_'+s.widget_id} required={s.required === true } placeholder="Text" />
-                    </div>)
-                    break;
-                case 'number_field':
-                    form.push(<div  key={i} className="mb-3">
-                        <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
-                            {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
-                        </label>
-                        <input type="number" className="form-control" value={usableAnswer[s.widget_id]} id={'input_'+s.widget_id} required={s.required === true } placeholder="Text"/>
-                    </div>)
-                    break;
-                case 'select_field':
-                    form.push(<div  key={i} className="mb-3">
-                          <label htmlFor="exampleFormControlSelect1" className="form-label">Example select
-                              {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
-                          </label>
-                          <select className="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                              <option selected>Open this select menu</option>
-                              <option value="1">One</option>
-                              <option value="2">Two</option>
-                              <option value="3">Three</option>
-                          </select>
-                        </div>)
-                    break;
-                case 'signature_field':
-                    form.push( <div className="mb-3" key={i}>
-                        <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
-                            {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
-                        </label>
-                        <SignatureCanva signatureUrl={signature_url} setSignatureUrl={setSignature_url} backgroundColor="#ffffff00" id={'input_'+s.widget_id} key={i} />
-                        <span id="signature_error" className="text-danger text-center"></span>
-                    </div>)
-                    break;
-                case 'image_field':
-                    form.push( <div key={i} className="mb-3">
-                           <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
-                               {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
-                           </label>
-                           <input className="form-control" type="file" accept="image/*" id={'input_'+s.widget_id} required={s.required === true }/>
-                           <img id={'img_'+s.widget_id} src={usableAnswer[s.widget_id]} alt=""/>
-                         </div>)
-                    break;
 
-                case 'certificat_field':
-                    form.push( <div key={i} className="mb-3">
-                        <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
-                            {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
-                        </label>
-                        <input className="form-control" type="file" accept="image/*" id={'input_'+s.widget_id} required={s.required === true }/>
-                    </div>)
-                    break;
-                default:
-                    return null;
+            if(howManyTime(distinct_field_type,cas) <= 1){
+                switch (cas) {
+                    case 'text_field':
+                        form.push(<div key={i} className="mb-3">
+                            <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                                {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                            </label>
+                            <input type="text" className="form-control"  value={usableAnswer[s.widget_id]} id={'input_'+s.widget_id} required={s.required === true } data-widget_type={s.type_widget} placeholder="Text" />
+                        </div>)
+                        break;
+                    case 'number_field':
+                        form.push(<div  key={i} className="mb-3">
+                            <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                                {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                            </label>
+                            <input type="number" className="form-control" value={usableAnswer[s.widget_id]} id={'input_'+s.widget_id} data-widget_type={s.type_widget} required={s.required === true } placeholder="Text"/>
+                        </div>)
+                        break;
+                    case 'select_field':
+                        form.push(<div  key={i} className="mb-3">
+                            <label htmlFor="exampleFormControlSelect1" className="form-label">Example select
+                                {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                            </label>
+                            <select className="form-select" data-widget_type={s.type_widget} id="exampleFormControlSelect1" aria-label="Default select example">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>)
+                        break;
+                    case 'signature_field':
+                        form.push( <div className="mb-3" key={i}>
+                            <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                                {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                            </label>
+                            <SignatureCanva data-widget_type={s.type_widget} signatureUrl={signature_url} setSignatureUrl={setSignature_url} backgroundColor="#ffffff00" id={'input_'+s.widget_id} key={i} />
+                            <span id="signature_error" className="text-danger text-center"></span>
+                        </div>)
+                        break;
+                    case 'image_field':
+                        form.push( <div key={i} className="mb-3">
+                            <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                                {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                            </label>
+                            <input className="form-control" type="file" accept="image/*" data-widget_type={s.type_widget} id={'input_'+s.widget_id} required={s.required === true }/>
+                            <img id={'img_'+s.widget_id} src={usableAnswer[s.widget_id]} alt=""/>
+                        </div>)
+                        break;
+
+                    case 'certificat_field':
+                        form.push( <div key={i} className="mb-3">
+                            <label htmlFor={'input_'+s.widget_id} className="form-label">{displayWidgetLabel(s.type_widget)}
+                                {s.required == 'true' &&  <small className="text-danger mb-2"> *</small>}
+                            </label>
+                            <input className="form-control" type="file" accept="image/*" data-widget_type={s.type_widget} id={'input_'+s.widget_id} required={s.required === true }/>
+                        </div>)
+                        break;
+                    default:
+                        return null;
+                }
             }
+
             })}
         return form;
+    }
+
+    const howManyTime=(arr,el)=>{
+        let count = 0;
+        arr.forEach(element => {
+            if (element === el) {
+                count += 1;
+            }
+        });
+        return count ;
     }
 
     const fillForm =(e)=>{
@@ -283,7 +305,9 @@ const Sendboard = ( ) => {
         $("#form_answer input").each(function( index ) {
             if($(this).attr('id')!=='confirm'){
                 var identifiant  =  $(this).attr('id');
+                var widget_type  =  $(this).data('widget_type');
                 var id = identifiant.split('input_')[1];
+                var part = identifiant.split('_')[2];
                 var  val='';
                 var el = $( "#label_" + id);
                 var drop_elem = $( "#" + id);
@@ -309,13 +333,29 @@ const Sendboard = ( ) => {
                }
                else{
                      val = $(this).val();
+
                      answer.push({
                            id: id,
                            value:val,
                      })
                    ans[id] = val;
-                   //use_ans.push(ans);
                    el.html(val)
+
+                   {widget.map((s,i) => {
+                       if(s.type_widget==widget_type){
+                           answer.push({
+                               id: s.widget_id,
+                               value:val,
+                           })
+                           ans[s.widget_id] = val;
+                           var el_1 = $( "#label_" + s.widget_id);
+                           var drop_elem_1 = $( "#" + s.widget_id);
+                           el_1.html(val)
+                           drop_elem_1.css({"background-color":"rgb(245 245 249 / 0%)", "border":"0px"});
+
+                       }
+                   })}
+
                    localStorage.setItem('answer',JSON.stringify(answer))
                }
                drop_elem.css({"background-color":"rgb(245 245 249 / 0%)", "border":"0px"});

@@ -119,15 +119,6 @@ const AddMoreConfig = (props) => {
         }
 
         setSignataireAndValidataire(i);
-        // $('body').on('click', '.new_row', function (e) {
-        //     e.stopPropagation();
-        //     return false;
-        // })
-        //
-        // $('body').on('click', '.delete_row', function (e) {
-        //     e.stopPropagation();
-        //     return false;
-        // })
 
         getSendingDetail();
 
@@ -401,18 +392,18 @@ const AddMoreConfig = (props) => {
 
                                     </div>
                                 </div>
-
-                                <div className="card mt-3">
-                                    <div className="card-header">
-                                        <h5 className="card-title">
-                                            Ajouter les personnes qui recevront une copie des documents signés
-                                        </h5>
-                                    </div>
-                                    <div className="card-body">
-                                        <div className="form-repeater-cc">
-                                            <div data-repeater-list="cc">
-                                                <div className='cc_class' id="for_cc">
-                                                    {cc.map((element, index) => (
+                                {
+                                    sending["type_signature"]?.[0]?.type!=='recommandes' && <div className="card mt-3">
+                                        <div className="card-header">
+                                            <h5 className="card-title">
+                                                Ajouter les personnes qui recevront une copie des documents signés
+                                            </h5>
+                                        </div>
+                                        <div className="card-body">
+                                            <div className="form-repeater-cc">
+                                                <div data-repeater-list="cc">
+                                                    <div className='cc_class' id="for_cc">
+                                                        {cc.map((element, index) => (
                                                             <div className="row" key={index}>
                                                                 <div className="mb-3 col-lg-6 col-xl-4 col-12 mb-0">
                                                                     <label className="form-label" htmlFor="cc-1-1">Nom</label>
@@ -425,26 +416,27 @@ const AddMoreConfig = (props) => {
                                                                            placeholder="cc@gmail.com" />
                                                                 </div>
                                                                 <div className="mb-3 col-lg-12 col-xl-2 col-12 d-flex align-items-center mb-0">
-                                                                            <button className="btn btn-label-danger delete_row mt-4" onClick={() => removeFormFieldsCc(index)} >
-                                                                                <i className="bx bx-x"></i>
-                                                                                <span className="align-middle">Supprimer</span>
-                                                                            </button>
+                                                                    <button className="btn btn-label-danger delete_row mt-4" onClick={() => removeFormFieldsCc(index)} >
+                                                                        <i className="bx bx-x"></i>
+                                                                        <span className="align-middle">Supprimer</span>
+                                                                    </button>
                                                                 </div>
                                                             </div>
 
-                                                    ))}
+                                                        ))}
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="mb-0">
-                                                <button className="btn btn-primary new_row" type="button" onClick={() => addFormFieldsCc()}>
-                                                    <i className="bx bx-plus"></i>
-                                                    <span className="align-middle">Ajouter</span>
-                                                </button>
+                                                <div className="mb-0">
+                                                    <button className="btn btn-primary new_row" type="button" onClick={() => addFormFieldsCc()}>
+                                                        <i className="bx bx-plus"></i>
+                                                        <span className="align-middle">Ajouter</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
 
                                 <div className="card mt-3">
                                     <div className="card-header">
