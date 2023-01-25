@@ -54,7 +54,9 @@ function Dashboard(props) {
             <div className="layout-container">
                 <Sidebar />
                 <div className="layout-page">
-                   <NavB/>
+
+                    <NavB/>
+
                     <div className="mx-5 mt-2" id="general_error"></div>
                     <div className="content-wrapper">
                         {/* Start Content*/}
