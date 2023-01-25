@@ -30,14 +30,17 @@ const Login = ( ) => {
     }
 
     function loginNow(e) {
+
         e.preventDefault();
         $('#spinner_btn').removeClass('d-none');
         $('#sbt_btn').prop("disabled", true);
-        axios
-            .post( process.env.REACT_APP_API_BASE_URL+'login',
+
+
+        axios.post( process.env.REACT_APP_API_BASE_URL+'login',
                 {
                     email:email,
                     password:password
+
                 })
             .then(response => {
                 if(response.data.success === true){
@@ -48,6 +51,7 @@ const Login = ( ) => {
                     window.location.href='/home'
                 }
             }).catch(error=>{
+                console.log("error bass");
                 console.log(error);
                 $('#password_error').text('Email ou mot de passe incorrect')
         }).finally(function(){
