@@ -52,6 +52,12 @@ const Sendboard = ( ) => {
 
     }, [])
 
+    function closeWindow() {
+        let win = window.open("about:blank", "_self");
+        win.close();
+        return false;
+    }
+
     function canAccessPage(){
         var can =localStorage.getItem('already_signed');
         if(can !== null){
@@ -420,9 +426,9 @@ const Sendboard = ( ) => {
                     }
                     localStorage.setItem('already_signed',JSON.stringify(arr))
                     window['showSuccessToast']('Réponse envoyée avec succès')
-                    // setTimeout(() => {
-                    //     window.close();
-                    // }, 8000)
+                    setTimeout(() => {
+                        closeWindow();
+                    }, 5000);
 
                 }
             }).catch(function (error) {
