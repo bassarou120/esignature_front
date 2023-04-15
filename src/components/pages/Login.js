@@ -171,7 +171,7 @@ const Login = ( ) => {
                                     </span>
                                 </div>
                                 <span className="invalid-feedback" role="alert"></span>
-                                <strong id="password_error"></strong>
+                                <strong className="text-danger" id="password_error"></strong>
 
                             </div>
 
@@ -198,11 +198,11 @@ const Login = ( ) => {
                             </Link>
                         </p>
 
-                        <div className="divider my-4">
-                            <div className="divider-text">ou</div>
-                        </div>
+                        {/*<div className="divider my-4">*/}
+                        {/*    <div className="divider-text">ou</div>*/}
+                        {/*</div>*/}
 
-                        <SocialMediaIcon/>
+                        {/*<SocialMediaIcon/>*/}
                     </div>
                 </div>
             </div>

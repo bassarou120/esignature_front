@@ -194,7 +194,7 @@ const App = () => {
                 <Register/>
             </Route>
 
-              <Route path="/wesentmail" render={(props) => <AccountActivationMailSent {...props}/>}/>
+            <Route path="/wesentmail" render={(props) => <AccountActivationMailSent {...props}/>}/>
 
             <Route path="/forgetpassword">
                 <ForgetPassword/>

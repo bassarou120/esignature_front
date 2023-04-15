@@ -262,11 +262,11 @@ const Register = () => {
                                     </Link>
                                 </p>
 
-                                <div className="divider my-4">
-                                    <div className="divider-text">or</div>
-                                </div>
+                                {/*<div className="divider my-4">*/}
+                                {/*    <div className="divider-text">or</div>*/}
+                                {/*</div>*/}
 
-                                <SocialMediaIcon/>
+                                {/*<SocialMediaIcon/>*/}
                             </div>
                         </div>
                     </div>
