@@ -28,9 +28,9 @@ const Register = () => {
 
         var url_string = window.location.href;
         var url = new URL(url_string);
-        em =atob(url.searchParams.get("email")) ;
-        id =url.searchParams.get("id") ;
-
+        // em =atob(url.searchParams.get("email")) ;
+        // id =url.searchParams.get("id") ;
+      
         if(em !==''){
             setEmail(em);
         }
