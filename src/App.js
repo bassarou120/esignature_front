@@ -38,6 +38,7 @@ import NoFound_error from "./components/pages/404";
 import Sendboard from "./components/pages/Sendings/SendBoard";
 import axios from "axios";
 window.$ = $;
+
 const App = () => {
 
     const [loader, setLoader] = useState(true);

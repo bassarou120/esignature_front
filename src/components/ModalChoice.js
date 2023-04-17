@@ -27,15 +27,12 @@ const ModalChoice = () => {
         const script = document.createElement("script");
         script.src = '../assets/js/validation/modal.js';
         document.body.appendChild(script);
-
-
         getModels();
     }, [])
 
     let id_user=decrypt(localStorage.getItem('userId'));
 
     const handleChange = (e) => {
-        // console.log(e.target.files[0]);
         setFile(e.target.files[0])
     }
 
@@ -43,27 +40,17 @@ const ModalChoice = () => {
     window.changeModal = changeModal;
     const s= store.getState();
 
-
-
     const history = useHistory();
 
     const chooseSignatureSubmit = (e) => {
-
-
-
-
-
-
         e.preventDefault();
 
-        // $('#spinner_btn').removeClass('d-none');
-        // $('#sbt_btn').prop("disabled", true);
+        $('#spinner_btn').removeClass('d-none');
+        $('#sbt_btn').prop("disabled", true);
 
-        const data = new FormData();
+        const data = new FormData()
 
-        data.append('a', "bassa");
-      data.append('document', file);
-
+        data.append('document', file)
         data.append('id_type_signature', choose_signature)
         data.append('register_as_model', s)
 
@@ -75,15 +62,6 @@ const ModalChoice = () => {
             data.append('model_id', Item_id)
         }
 
-
-        for (const [key, value] of data) {
-            console.log(`${key}: ${value}\n`);
-        }
-
-
-        // console.log( localStorage.getItem('token'));
-
-
         axios
             .post( process.env.REACT_APP_API_BASE_URL +'sendings', data,{
                 headers: {
@@ -92,10 +70,6 @@ const ModalChoice = () => {
                 }
             })
             .then(response => {
-
-                console.log(response );
-
-                /*
                 if(response.data.success === true){
                     $('#chooseSignatureType').trigger("reset");
                    // $('#add_group_modal').modal('hide');
@@ -120,7 +94,6 @@ const ModalChoice = () => {
                 else{
                     console.log('error');
                 }
-                */
             }).catch(function (error) {
             if (error.response) {
                 if(error.response.status===400){
@@ -129,9 +102,6 @@ const ModalChoice = () => {
                     $.each(error.response.data.data, function (key, value) {
                         $('#modal_error_ul').append('<li class="list-group-item">' + value + '</li>');
                     });
-                }
-                if(error.response.status===500){
-                    console.log("erreur 500");
                 }
                 $('#spinner_btn').addClass('d-none')
                 $('#sbt_btn').prop("disabled", false);
@@ -142,8 +112,6 @@ const ModalChoice = () => {
             } ,200);
 
         });
-
-
     };
 
      function getModels() {
@@ -195,15 +163,10 @@ const ModalChoice = () => {
                                         chooseSignature={choose_signature} setchoosesignature={setChooseSignature}
                                         models={models} setmodels={setModels}
                                     />
-
                                     {lk ==='model' || s.is_model_popup===1 ?  <div className="mb-3">
-
-                              <label htmlFor="formFile" className="form-label"></label>
-
+                                        <label htmlFor="formFile" className="form-label"></label>
                                         <input className="form-control" type="file" onChange={handleChange} id="pdf_file" name="pdf_file" accept=".PDF,.pdf" />
                                     </div> : <div>
-
-
                                         <ul className="nav nav-tabs nav-fill" role="tablist">
                                             <li className="nav-item">
                                                 <button type="button" className="nav-link active" role="tab" data-bs-toggle="tab"
@@ -225,16 +188,12 @@ const ModalChoice = () => {
                                                 <div className="list-group text-center">
                                                     <div className="mb-3">
                                                         <div className="mb-3">
-
                                                             <label htmlFor="formFile" className="form-label"></label>
-
                                                             <input className="form-control" type="file" onChange={handleChange} id="pdf_file" name="pdf_file" accept=".PDF,.pdf" />
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-
-
                                             <div className="tab-pane fade" id="navs-justified-profile" role="tabpanel">
                                                 <div className="mb-3 row">
                                                     {models.length === 0 &&
@@ -242,7 +201,6 @@ const ModalChoice = () => {
                                                         Vous n'avez aucun models.
                                                     </h5>
                                                     }
-
                                                     {models.map((l, k) =>  <div key={k} className="col-md-2 jss109">
                                                             <div className="jss121 jss132 ">
                                                         <span className="jss128">
@@ -283,12 +241,9 @@ const ModalChoice = () => {
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }
-
-
 
 export default ModalChoice;
 

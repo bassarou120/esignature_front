@@ -6,27 +6,15 @@ import strings from "./Translation/Translation";
 import { useLocation } from "react-router-dom";
 import store from "../store";
 import {changeModal} from "../actions";
-import Modal from 'react-modal';
 import $ from 'jquery';
 window.$ = $;
 
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-    },
-};
 
 
 const Sidebar = ( ) => {
     const location = useLocation();
     const { pathname } = location;
     const splitLocation = pathname.split("/");
-
 
     useEffect(() => {
             const script = document.createElement("script");
@@ -161,24 +149,9 @@ const Sidebar = ( ) => {
 
             ]
 
-
-
         function openChoiceModal() {
             store.dispatch( changeModal({ model:  0}) );
         }
-
-    // function openModal() {
-    //     setIsOpen(true);
-    // }
-    //
-    // function afterOpenModal() {
-    //     // references are now sync'd and can be accessed.
-    //     subtitle.style.color = '#f00';
-    // }
-    //
-    // function closeModal() {
-    //     setIsOpen(false);
-    // }
 
         window.store = store;
         window.changeModal = changeModal;
@@ -260,7 +233,6 @@ const Sidebar = ( ) => {
               </span>
                         <span className="app-brand-text demo menu-text fw-bolder ms-2">E-signature</span>
                     </a>
-
                     <a href="!#" className="layout-menu-toggle menu-link text-large ms-auto">
                         <i className="bx bx-chevron-left bx-sm align-middle"></i>
                     </a>
@@ -274,28 +246,12 @@ const Sidebar = ( ) => {
 
                 <ul className="menu-inner py-1 overflow-auto">
                     {/*{renderSendingButton()}*/}
-
                     <li className="menu-item mb-4 text-center">
                         <a href="" id="sidebarModal" type="button" className="btn btn-primary" data-bs-toggle="modal"
                            data-bs-target="#onboardingSlideModal" onClick={openChoiceModal}>
                             Nouvel envoi
                         </a>
                     </li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                     {items.map((l, k) =>{
                         if(l.submenu.length !==0)
