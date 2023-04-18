@@ -165,7 +165,7 @@ const Register = () => {
                                       method="POST" noValidate="novalidate">
                                     <p className="text-center text-danger" id="registration_error"></p>
                                     <div className="mb-3 fv-plugins-icon-container">
-                                        <label form="username" className="form-label">Nom</label>
+                                        <label form="username" className="form-label">Nom et Prénom</label>
                                         <input type="text" id="name" name="name"
                                                placeholder="" autoFocus="" className="form-control " value={name}
                                                onChange={e => {
