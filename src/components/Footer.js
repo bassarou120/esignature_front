@@ -10,29 +10,29 @@ const Footer = ( ) => {
                     <script>
                         document.write(new Date().getFullYear());
                     </script>
-                    , made with ❤️ by
-                    <a href="https://themeselection.com" target="_blank"
-                       className="footer-link fw-bolder">ThemeSelection</a>
+                    , made by
+                    <a href="#" target="_blank"
+                       className="footer-link fw-bolder">Starlabs</a>
                 </div>
-                <div>
-                    <a href="https://themeselection.com/license/" className="footer-link me-4"
-                       target="_blank">License</a>
-                    <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">More Themes</a>
+                {/*<div>*/}
+                {/*    <a href="https://themeselection.com/license/" className="footer-link me-4"*/}
+                {/*       target="_blank">License</a>*/}
+                {/*    <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">More Themes</a>*/}
 
-                    <a
-                        href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                        target="_blank"
-                        className="footer-link me-4"
-                    >Documentation</a
-                    >
+                {/*    <a*/}
+                {/*        href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"*/}
+                {/*        target="_blank"*/}
+                {/*        className="footer-link me-4"*/}
+                {/*    >Documentation</a*/}
+                {/*    >*/}
 
-                    <a
-                        href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                        target="_blank"
-                        className="footer-link me-4"
-                    >Support</a
-                    >
-                </div>
+                {/*    <a*/}
+                {/*        href="https://github.com/themeselection/sneat-html-admin-template-free/issues"*/}
+                {/*        target="_blank"*/}
+                {/*        className="footer-link me-4"*/}
+                {/*    >Support</a*/}
+                {/*    >*/}
+                {/*</div>*/}
             </div>
         </footer>
     );

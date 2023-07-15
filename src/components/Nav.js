@@ -63,14 +63,14 @@ const NavB = ( ) => {
                             </ul>
                         </li>*/}
 
-                        <li className="nav-item me-2 me-xl-0">
+                        {/* <li className="nav-item me-2 me-xl-0">
                             <a className="nav-link style-switcher-toggle hide-arrow" href=""
                                data-bs-original-title="" title="">
                                 <i className="bx bx-sm bx-moon"/>
                             </a>
-                        </li>
+                        </li> */}
 
-                        <li className="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
+                        {/* <li className="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
                             <a className="nav-link dropdown-toggle hide-arrow" href="#"
                                data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                 <i className="bx bx-bell bx-sm"/>
@@ -124,9 +124,18 @@ const NavB = ( ) => {
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> */}
 
-                        <li className="nav-item navbar-dropdown dropdown-user dropdown">
+                        <li className="nav-item me-2 me-xl-0">
+                            <Link className="nav-link  hide-arrow" to="/profile"
+                               data-bs-original-title="" title="">
+                                <div className="avatar avatar-online">
+                                    <img src="../assets/img/avatars/1.png" alt=""
+                                         className="w-px-40 h-auto rounded-circle"/>
+                                </div>
+                            </Link>
+                       </li>
+                       {/* <li className="nav-item navbar-dropdown dropdown-user dropdown">
                             <a className="nav-link dropdown-toggle hide-arrow" href="#"
                                data-bs-toggle="dropdown">
                                 <div className="avatar avatar-online">
@@ -178,18 +187,18 @@ const NavB = ( ) => {
                                 <li>
                                     <div className="dropdown-divider"/>
                                 </li>
-                                {/*    <li>
+                                <li>
                                 <a className="dropdown-item" href="pages-help-center-landing.html">
                                     <i className="bx bx-support me-2"/>
                                     <span className="align-middle">Help</span>
                                 </a>
-                            </li>
-                            <li>
-                                <a className="dropdown-item" href="pages-faq.html">
-                                    <i className="bx bx-help-circle me-2"/>
-                                    <span className="align-middle">FAQ</span>
-                                </a>
-                            </li>*/}
+                                </li>
+                                <li>
+                                    <a className="dropdown-item" href="pages-faq.html">
+                                        <i className="bx bx-help-circle me-2"/>
+                                        <span className="align-middle">FAQ</span>
+                                    </a>
+                                </li>
                                 <li>
                                     <div className="dropdown-divider"/>
                                 </li>
@@ -200,7 +209,7 @@ const NavB = ( ) => {
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> */}
 
                     </ul>
                 </div>
