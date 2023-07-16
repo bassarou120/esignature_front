@@ -17,6 +17,14 @@ RUN mkdir -p /etc/nginx/conf.d
 COPY ./default.conf /etc/nginx/conf.d/
 COPY --from=builder /app/build /usr/share/nginx/html
 EXPOSE 80
+
+
+# Set any ENVs
+ARG REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
+ARG REACT_APP_BACKEND_ASSET_BASE_URL=${REACT_APP_BACKEND_ASSET_BASE_URL}
+ARG REACT_APP_NAME=${REACT_APP_NAME}
+
+
 CMD ["nginx", "-g", "daemon off;"]
 
 
